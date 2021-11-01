@@ -1,0 +1,26 @@
+(** @canonical Basics.Display *)
+module Display = Basics__Display
+
+
+(** @canonical Basics.Flow_graph *)
+module Flow_graph = Basics__Flow_graph
+
+
+(** @canonical Basics.Helper *)
+module Helper = Basics__Helper
+
+
+(** @canonical Basics.Int_dynamic_array *)
+module Int_dynamic_array = Basics__Int_dynamic_array
+
+
+(** @canonical Basics.Miscellaneous *)
+module Miscellaneous = Basics__Miscellaneous
+
+
+(** @canonical Basics.Std_DataStruct *)
+module Std_DataStruct = Basics__Std_DataStruct
+
+
+(** @canonical Basics.Std_algorithms *)
+module Std_algorithms = Basics__Std_algorithms

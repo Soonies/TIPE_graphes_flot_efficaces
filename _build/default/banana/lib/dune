@@ -1,0 +1,6 @@
+(library
+ (name basics)
+ (public_name banana.basics)
+ (libraries ocamlgraph)
+ (synopsis "Basics Imprementations de graphes de flot et fonctionnelles")
+ )

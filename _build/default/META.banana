@@ -1,0 +1,10 @@
+package "basics" (
+  directory = "basics"
+  version = "dev"
+  description = "Basics Imprementations de graphes de flot et fonctionnelles"
+  requires = "ocamlgraph"
+  archive(byte) = "basics.cma"
+  archive(native) = "basics.cmxa"
+  plugin(byte) = "basics.cma"
+  plugin(native) = "basics.cmxs"
+)
