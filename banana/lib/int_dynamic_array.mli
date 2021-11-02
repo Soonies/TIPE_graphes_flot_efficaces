@@ -20,7 +20,7 @@ val see: t -> int -> int  (** see content of the ith cell. An array is 0-indexed
 
 (***MUTATORS**)
 
-val add:  t -> int -> unit (** [add a x] ->> add [x] to the array [a]*)
+val add:  t -> int -> int (** [add a x] ->> add [x] to the array [a] and returns its index. The latter won't change until the element is eventually supressed from the array, in which case the newly freed space could be reattributed to a new element *)
 
 val remove: t -> int -> unit (**remove a k ->> removes the element of index [k] from the array [a]*)
 

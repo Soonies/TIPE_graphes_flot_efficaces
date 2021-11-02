@@ -14,7 +14,7 @@
     type t (** Flow Graph Type*)
 
     
-    type vertex  (*=int*)(**Vertices are labled by `int (pr print et pr les functeurs)*)
+    type vertex  =int(**Vertices are labled by `int (pr print et pr les functeurs)*)
 
     type edge = vertex * vertex
 

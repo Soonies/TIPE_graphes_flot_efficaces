@@ -5,7 +5,7 @@ let  _  = D.empty
 let _  = D.fill 0 0 
 type vertex = int 
 type edge = vertex *vertex
-(*1 array for the : b(i), point(i), rpoint(i),f/r-trace(i),tail,head,cost,capacity*)
+(*1 array for the : b(i) = supply, point(i), rpoint(i),f/r-trace(i),tail,head,cost,capacity*)
 
 type vertex_attributes = {b : int array}
 type pointers = { frange : int array ; rrange : int array   ;

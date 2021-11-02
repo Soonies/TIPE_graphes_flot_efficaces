@@ -33,6 +33,8 @@ let add a x =
     a.next_index <- a.next_index +1 
   else
     a.next_index <- n
+  ;
+  next
 
 (**updates [next_index] to point to the newly free space then frees up the space*)
 let remove a k = 
