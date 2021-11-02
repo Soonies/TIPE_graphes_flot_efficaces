@@ -205,5 +205,3 @@ let ()  = print_endline " enter anything to terminate" in
 let _ = read_line () in
 !g
 
-module M = struct
-end
