@@ -45,5 +45,11 @@ let set a k x = H.replace a.tbl k x
 
 let iter f a = H.iter (fun _ x -> f x) a.tbl (*f ignores the index of the item*)
 
-let fold  f  a x0= H.fold (fun _ data previous -> f data previous ) a.tbl x0 
+let fold  f  a x0 = H.fold (fun _ data previous -> f data previous ) a.tbl x0 
+
+let enum f  a  = 
+  H.fold (fun  a b _ -> f a b) a.tbl ()
+
+let fold_enum  f a x0 = 
+  H.fold f a.tbl x0 
 

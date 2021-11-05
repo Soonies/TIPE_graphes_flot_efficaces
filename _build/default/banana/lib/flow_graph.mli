@@ -1,6 +1,6 @@
     (*******************************************
         Interface of a `flow_graph`
-        -Verticies are labeled by integers `int`
+        -Verticies are labeled by integers `int` starting from 1
         - flows and costs are integral
         -edges are tuples of vertices
         -Each edge can be capacitated (capacities are sealed)
@@ -11,14 +11,16 @@
     *******************************************)
     
     
-    type t (** Flow Graph Type*)
+ 
 
     
     type vertex  =int(**Vertices are labled by `int (pr print et pr les functeurs)*)
 
-    type edge = vertex * vertex
-
     type capacity = Capa of int | Infty
+
+    type edge = vertex * vertex
+ 
+    type t (** Flow Graph Type*)
 
     type vpath = vertex list (**A path within the graph described by vertices *)
     
@@ -37,7 +39,7 @@
 
     val (++) : capacity -> capacity -> capacity(**Sum of two capacities*)
     
-    val (--) : capacity -> capacity -> capacity (**Substraction of two capacities*)
+    val (--) : capacity -> capacity -> capacity (**Substraction of two capacities. *)
     
     val ( ** ) : capacity -> capacity -> capacity(**Multiplication of two capacities*)
     
@@ -54,12 +56,10 @@
 
     (*~CONSTRUCTORS~*)
 
-    val create : int -> t (**Creates an n edged graph. The size is FIXED and cannot be modified.*)
+    val create : int -> t (**Creates an n edged graph with 0 supply for all vertices and no edges. The size is FIXED and cannot be modified.*)
     
-
     val add_edge : t -> edge -> unit(** add_edge g e -> adds an edge e to the graph g*)
     
-
     val delete_edge : t -> edge -> unit(** delete_edge g e -> removes the edge e from the graph g*)
     
     

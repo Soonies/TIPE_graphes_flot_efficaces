@@ -33,3 +33,6 @@ val iter : (int -> unit) -> t -> unit  (** iters through each element of a*)
 
 val fold : (int -> 'a -> 'a) ->  t -> 'a -> 'a  (**folds*)
 
+val enum : (int -> 'a -> unit ) -> t -> unit (**[enum f array] applies f to i and array.(i)  for each element *)
+
+val fold_enum : (int -> int ->  'a) -> t -> 'a -> 'a (**[enum f  array x0 ] applies f to i annd array.(i)  and the previous result of the fold *)

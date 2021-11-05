@@ -68,19 +68,59 @@ let create n  =
   attributes_edges = attributes_edges ;
   vertices_supply  = vertices_supply}
 
-(** [set_extremity_chain g extremity mode v  i] change la valeur du debut de chaine pour *)
-let set_extremity_chain g extremity mode v  i =
+
+(** [do_extremity_chain g extremity mode v  i d_function] applique [d_function] a [g.fow\back_edges] index_vertex (en fonction du mode) i   ;  [extremity] must be one of [start \ eend] . [mode] must be one of [foward\backward].' *)
+let do_extremity_chain g extremity mode v  i d_function  =
   match (extremity,mode) with
-    | "start" , "foward"  -> D.set g.foward_edges (2*v-1) i
-    | "start" , "reverse" -> D.set g.reverse_edges (2*v-1) i
-    | "end" , "foward"    -> D.set g.foward_edges (2*v) i
-    | "end" , "reverse"   -> D.set g.reverse_edges (2*v) i
+    | "start" , "foward"  -> d_function g.foward_edges (2*v-1) i
+    | "start" , "reverse" -> d_function g.reverse_edges (2*v-1) i
+    | "end" , "foward"    -> d_function g.foward_edges (2*v) i
+    | "end" , "reverse"   -> d_function g.reverse_edges (2*v) i
     | _, _  ->  failwith "Invalid parameter: [extremity] OR [mode]. [extremity] must be one of [start/end] . [mode] must be one of [foward/backward]."
 
+(** [set_extremity_chain g extremity mode v  i] change la valeur du debut de chaine pour [extremity] must be one of [start \ eend] . [mode] must be one of [foward\backward].' *)
+let set_extremity_chain g extremity mode v i  = 
+  do_extremity_chain g extremity mode v i D.set
 
-let add_edge g e  = 
-  let (u,v) = e in 
+let see_extremity_chain g extremity mode v  = 
+  do_extremity_chain g extremity mode v () (fun  a b _ -> D.see a b )
   
-  (*foward*)
+let do_on_pointer g  mode a b d_function = 
+  match mode with
+  | "foward" -> d_function g.foward_edges a b 
+  | "reverse" -> d_function g.reverse_edges a b
+  | _ -> failwith "prout"
+  
+let see_pointer g mode index =  
+  do_on_pointer g mode  index () (fun a b _ -> D.see a b )
 
+let set_pointer g mode index x  = 
+  do_on_pointer  g mode index x D.set
+
+
+let add_edge  g e  = 
+  let (u,v) = e   in 
+
+  let addition_edge  mode  x = 
+  
+    let endd = see_extremity_chain g "end" "foward" u in
+  
+    let n  =  match mode with 
+      | "foward" -> D.add g.foward_edges x
+      | "reverse" -> D.add g.reverse_edges x
+      | _ -> failwith "prout"
+    in 
+    
+    if endd = -1 then (
+      set_extremity_chain  g "start" mode x (n+1);
+      set_extremity_chain  g "end" mode x (n+1);
+      set_pointer g mode (n+1) (-1)
+    ) else (
+      set_extremity_chain  g "end" mode x (n+1);
+      set_pointer g mode endd (n+1);
+      set_pointer g mode (n+1) (-1)
+    )
+    in 
+    addition_edge "foward" u ; 
+    addition_edge "reverse" v
 
