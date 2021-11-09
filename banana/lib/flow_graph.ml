@@ -120,7 +120,8 @@ let add_edge  g e  =
       set_pointer g mode endd (n+1);
       set_pointer g mode (n+1) (-1)
     )
-    in 
-    addition_edge "foward" u ; 
-    addition_edge "reverse" v
+  in 
+ 
+  addition_edge "foward" u ; 
+  addition_edge "reverse" v
 
