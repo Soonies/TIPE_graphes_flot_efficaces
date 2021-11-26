@@ -7,41 +7,41 @@ lib: [
   "_build/install/default/lib/banana/basics/basics.cmx" {"basics/basics.cmx"}
   "_build/install/default/lib/banana/basics/basics.cmxa" {"basics/basics.cmxa"}
   "_build/install/default/lib/banana/basics/basics.ml" {"basics/basics.ml"}
-  "_build/install/default/lib/banana/basics/basics__Container.cmi" {"basics/basics__Container.cmi"}
-  "_build/install/default/lib/banana/basics/basics__Container.cmti" {"basics/basics__Container.cmti"}
   "_build/install/default/lib/banana/basics/basics__Display.cmi" {"basics/basics__Display.cmi"}
   "_build/install/default/lib/banana/basics/basics__Display.cmt" {"basics/basics__Display.cmt"}
   "_build/install/default/lib/banana/basics/basics__Display.cmx" {"basics/basics__Display.cmx"}
+  "_build/install/default/lib/banana/basics/basics__Dynamic_array.cmi" {"basics/basics__Dynamic_array.cmi"}
+  "_build/install/default/lib/banana/basics/basics__Dynamic_array.cmt" {"basics/basics__Dynamic_array.cmt"}
+  "_build/install/default/lib/banana/basics/basics__Dynamic_array.cmti" {"basics/basics__Dynamic_array.cmti"}
+  "_build/install/default/lib/banana/basics/basics__Dynamic_array.cmx" {"basics/basics__Dynamic_array.cmx"}
   "_build/install/default/lib/banana/basics/basics__Flow_graph.cmi" {"basics/basics__Flow_graph.cmi"}
-  "_build/install/default/lib/banana/basics/basics__Flow_graph.cmt" {"basics/basics__Flow_graph.cmt"}
   "_build/install/default/lib/banana/basics/basics__Flow_graph.cmti" {"basics/basics__Flow_graph.cmti"}
-  "_build/install/default/lib/banana/basics/basics__Flow_graph.cmx" {"basics/basics__Flow_graph.cmx"}
   "_build/install/default/lib/banana/basics/basics__Helper.cmi" {"basics/basics__Helper.cmi"}
   "_build/install/default/lib/banana/basics/basics__Helper.cmt" {"basics/basics__Helper.cmt"}
   "_build/install/default/lib/banana/basics/basics__Helper.cmx" {"basics/basics__Helper.cmx"}
-  "_build/install/default/lib/banana/basics/basics__Int_dynamic_array.cmi" {"basics/basics__Int_dynamic_array.cmi"}
-  "_build/install/default/lib/banana/basics/basics__Int_dynamic_array.cmt" {"basics/basics__Int_dynamic_array.cmt"}
-  "_build/install/default/lib/banana/basics/basics__Int_dynamic_array.cmti" {"basics/basics__Int_dynamic_array.cmti"}
-  "_build/install/default/lib/banana/basics/basics__Int_dynamic_array.cmx" {"basics/basics__Int_dynamic_array.cmx"}
+  "_build/install/default/lib/banana/basics/basics__Linked_array.cmi" {"basics/basics__Linked_array.cmi"}
+  "_build/install/default/lib/banana/basics/basics__Linked_array.cmt" {"basics/basics__Linked_array.cmt"}
+  "_build/install/default/lib/banana/basics/basics__Linked_array.cmti" {"basics/basics__Linked_array.cmti"}
+  "_build/install/default/lib/banana/basics/basics__Linked_array.cmx" {"basics/basics__Linked_array.cmx"}
   "_build/install/default/lib/banana/basics/basics__Miscellaneous.cmi" {"basics/basics__Miscellaneous.cmi"}
   "_build/install/default/lib/banana/basics/basics__Miscellaneous.cmt" {"basics/basics__Miscellaneous.cmt"}
   "_build/install/default/lib/banana/basics/basics__Miscellaneous.cmx" {"basics/basics__Miscellaneous.cmx"}
-  "_build/install/default/lib/banana/basics/basics__Stack.cmi" {"basics/basics__Stack.cmi"}
-  "_build/install/default/lib/banana/basics/basics__Stack.cmt" {"basics/basics__Stack.cmt"}
-  "_build/install/default/lib/banana/basics/basics__Stack.cmx" {"basics/basics__Stack.cmx"}
+  "_build/install/default/lib/banana/basics/basics__Std_DataStruct.cmi" {"basics/basics__Std_DataStruct.cmi"}
+  "_build/install/default/lib/banana/basics/basics__Std_DataStruct.cmt" {"basics/basics__Std_DataStruct.cmt"}
+  "_build/install/default/lib/banana/basics/basics__Std_DataStruct.cmx" {"basics/basics__Std_DataStruct.cmx"}
   "_build/install/default/lib/banana/basics/basics__Std_algorithms.cmi" {"basics/basics__Std_algorithms.cmi"}
   "_build/install/default/lib/banana/basics/basics__Std_algorithms.cmt" {"basics/basics__Std_algorithms.cmt"}
   "_build/install/default/lib/banana/basics/basics__Std_algorithms.cmti" {"basics/basics__Std_algorithms.cmti"}
   "_build/install/default/lib/banana/basics/basics__Std_algorithms.cmx" {"basics/basics__Std_algorithms.cmx"}
-  "_build/install/default/lib/banana/basics/container.mli" {"basics/container.mli"}
   "_build/install/default/lib/banana/basics/display.ml" {"basics/display.ml"}
-  "_build/install/default/lib/banana/basics/flow_graph.ml" {"basics/flow_graph.ml"}
+  "_build/install/default/lib/banana/basics/dynamic_array.ml" {"basics/dynamic_array.ml"}
+  "_build/install/default/lib/banana/basics/dynamic_array.mli" {"basics/dynamic_array.mli"}
   "_build/install/default/lib/banana/basics/flow_graph.mli" {"basics/flow_graph.mli"}
   "_build/install/default/lib/banana/basics/helper.ml" {"basics/helper.ml"}
-  "_build/install/default/lib/banana/basics/int_dynamic_array.ml" {"basics/int_dynamic_array.ml"}
-  "_build/install/default/lib/banana/basics/int_dynamic_array.mli" {"basics/int_dynamic_array.mli"}
+  "_build/install/default/lib/banana/basics/linked_array.ml" {"basics/linked_array.ml"}
+  "_build/install/default/lib/banana/basics/linked_array.mli" {"basics/linked_array.mli"}
   "_build/install/default/lib/banana/basics/miscellaneous.ml" {"basics/miscellaneous.ml"}
-  "_build/install/default/lib/banana/basics/stack.ml" {"basics/stack.ml"}
+  "_build/install/default/lib/banana/basics/std_DataStruct.ml" {"basics/std_DataStruct.ml"}
   "_build/install/default/lib/banana/basics/std_algorithms.ml" {"basics/std_algorithms.ml"}
   "_build/install/default/lib/banana/basics/std_algorithms.mli" {"basics/std_algorithms.mli"}
   "_build/install/default/lib/banana/dune-package"
