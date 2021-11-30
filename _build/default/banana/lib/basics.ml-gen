@@ -1,7 +1,3 @@
-(** @canonical Basics.Display *)
-module Display = Basics__Display
-
-
 (** @canonical Basics.Dynamic_array *)
 module Dynamic_array = Basics__Dynamic_array
 
@@ -10,21 +6,5 @@ module Dynamic_array = Basics__Dynamic_array
 module Flow_graph = Basics__Flow_graph
 
 
-(** @canonical Basics.Helper *)
-module Helper = Basics__Helper
-
-
 (** @canonical Basics.Linked_array *)
 module Linked_array = Basics__Linked_array
-
-
-(** @canonical Basics.Miscellaneous *)
-module Miscellaneous = Basics__Miscellaneous
-
-
-(** @canonical Basics.Std_DataStruct *)
-module Std_DataStruct = Basics__Std_DataStruct
-
-
-(** @canonical Basics.Std_algorithms *)
-module Std_algorithms = Basics__Std_algorithms

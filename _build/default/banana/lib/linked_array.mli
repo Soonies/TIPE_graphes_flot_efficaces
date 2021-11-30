@@ -37,7 +37,7 @@ val remove: 'a t -> int -> unit (**[remove a k x] ->> replace the value at index
 
 (**ITERATORS AND FOLDS*) 
 
-val iterc_range : ( int -> 'a -> unit) -> 'a t -> int ->  int -> unit  (**[iterc f a strt stop] iters through the chain from index start to stop*) (*pas de sens d'avoir des iter sur les indices slm pcq le seul ordre defini c'est celui de la chaine...*)
+val iterc_range : ( int -> 'a -> unit) -> 'a t -> int ->  int -> unit  (**[iterc f a strt stop] iters through the chain [a] from index start to stop*) (*pas de sens d'avoir des iter sur les indices slm pcq le seul ordre defini c'est celui de la chaine...*)
 
 val iterc : ( int->'a -> unit) -> 'a t ->  unit  (**[iterc f a strt stop] iters through the chain from index start to stop, applying f to a.[i]*)
 

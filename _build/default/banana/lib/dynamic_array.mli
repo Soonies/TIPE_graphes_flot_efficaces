@@ -18,7 +18,7 @@ val create : int-> 'a t (**[create n]   creates an empty int dynamic array of pr
 (**OBSERVERS *)
 val size : 'a t -> int (**return the number of elements contained in the array*)
 
-val see: 'a t -> int -> 'a  (** see content of the ith  cell. An array is 0-indexed*)
+val see: 'a t -> int -> 'a  (** see and access content of the ith  cell. An array is 0-indexed*)
 
 (***MUTATORS**)
 
