@@ -3,5 +3,4 @@
  (public_name banana.basics)
  (libraries ocamlgraph)
  (synopsis "Basics Imprementations de graphes de flot et fonctionnelles")
- (modules_without_implementation flow_graph dynamic_array  linked_array)
  )

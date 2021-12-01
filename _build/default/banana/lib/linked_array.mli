@@ -5,6 +5,8 @@
 type 'a t
 
 
+
+
 val create : int -> 'a t (** creates a new empty linked array of previsionnal length n *)
 
 val is_empty :  'a t -> bool

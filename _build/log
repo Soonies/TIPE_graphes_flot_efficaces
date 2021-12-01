@@ -1,10 +1,10 @@
 # dune build
 # OCAMLPARAM: unset
 # Workspace root: /mnt/c/Users/mr-sa/OneDrive/Bureau/THE/development
-$ /usr/bin/nproc > /tmp/dune14348d.output 2> /dev/null
+$ /usr/bin/nproc > /tmp/dune7fe90d.output 2> /dev/null
 # Auto-detected concurrency: 12
 # disable binary cache
-$ /home/soon/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune715f8b.output
+$ /home/soon/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/duned46100.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -113,14 +113,3 @@ $ /home/soon/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune715f8b.output
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -bin-annot -I banana/lib/.basics.objs/byte -no-alias-deps -opaque -o banana/lib/.basics.objs/byte/basics.cmo -c -impl banana/lib/basics.ml-gen)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -I banana/lib/.basics.objs/byte -I banana/lib/.basics.objs/native -intf-suffix .ml-gen -no-alias-deps -opaque -o banana/lib/.basics.objs/native/basics.cmx -c -impl banana/lib/basics.ml-gen)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o banana/lib/basics.cma banana/lib/.basics.objs/byte/basics.cmo)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I banana/lib/.basics.objs/byte -I /home/soon/.opam/cs3110-2021fa/lib/ocamlgraph -I /home/soon/.opam/cs3110-2021fa/lib/stdlib-shims -no-alias-deps -opaque -open Basics -o banana/lib/.basics.objs/byte/basics__Dynamic_array.cmi -c -intf banana/lib/dynamic_array.mli)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I banana/lib/.basics.objs/byte -I /home/soon/.opam/cs3110-2021fa/lib/ocamlgraph -I /home/soon/.opam/cs3110-2021fa/lib/stdlib-shims -no-alias-deps -opaque -open Basics -o banana/lib/.basics.objs/byte/basics__Linked_array.cmi -c -intf banana/lib/linked_array.mli)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I banana/lib/.basics.objs/byte -I /home/soon/.opam/cs3110-2021fa/lib/ocamlgraph -I /home/soon/.opam/cs3110-2021fa/lib/stdlib-shims -no-alias-deps -opaque -open Basics -o banana/lib/.basics.objs/byte/basics__Flow_graph.cmi -c -intf banana/lib/flow_graph.mli)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o banana/lib/basics.cmxa banana/lib/.basics.objs/native/basics.cmx)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I banana/bin/.main.eobjs/byte -I /home/soon/.opam/cs3110-2021fa/lib/ocamlgraph -I /home/soon/.opam/cs3110-2021fa/lib/stdlib-shims -I banana/lib/.basics.objs/byte -no-alias-deps -opaque -o banana/bin/.main.eobjs/byte/dune__exe__Main.cmo -c -impl banana/bin/main.ml)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I banana/bin/.main.eobjs/byte -I banana/bin/.main.eobjs/native -I /home/soon/.opam/cs3110-2021fa/lib/ocamlgraph -I /home/soon/.opam/cs3110-2021fa/lib/stdlib-shims -I banana/lib/.basics.objs/byte -I banana/lib/.basics.objs/native -intf-suffix .ml -no-alias-deps -opaque -o banana/bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl banana/bin/main.ml)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -shared -linkall -I banana/lib -o banana/lib/basics.cmxs banana/lib/basics.cmxa)
-$ (cd _build/default && /home/soon/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o banana/bin/main.exe /home/soon/.opam/cs3110-2021fa/lib/stdlib-shims/stdlib_shims.cmxa /home/soon/.opam/cs3110-2021fa/lib/ocamlgraph/graph.cmxa banana/lib/basics.cmxa banana/bin/.main.eobjs/native/dune__exe__Main.cmx)
