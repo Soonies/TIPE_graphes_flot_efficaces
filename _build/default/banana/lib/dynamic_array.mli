@@ -3,6 +3,7 @@ Dynamic resizable 'a array*)
 
 type 'a t (**0 indexed*)
 
+exception Invalid_index of int
 
 
 (*****CONSTRUCTORS*)

@@ -11,6 +11,8 @@ module S = Stack
 type 'a t  = {mutable next_index : int ; tbl : (int,'a) H.t } (** nnext_index indicates the index of the next element 
 to be added, tbl is the hash table representing the array*)
 
+exception Invalid_index of int
+
 (* let empty =  { next_index = 0 ; tbl  = H.create 20}*)
 
 let fill n x  = 
@@ -24,8 +26,13 @@ let create n = {next_index= 0 ; tbl = H.create n}
 
 let size a = H.length a.tbl
 
-let see a k = H.find a.tbl k (*Note to self: dont forget to add excetpion*)
+let see a k = 
+  try
+    H.find a.tbl k (*Note to self: dont forget to add excetpion*)
+  with 
+  | Not_found -> raise (Invalid_index k)
 
+  
 (**adds the new element then updates [next_index] to its new value (depending on whether we have just filled a free pace or if we are at the end of the array)*)
 let add a x = 
   let n = size a in 
