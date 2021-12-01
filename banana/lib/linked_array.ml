@@ -23,7 +23,6 @@ let is_empty a  = (start a = -1)
 
 let size a = D.size a.content
 
-
  (**[access_cell a k] returns the cell in the array [a] at index [k]*)
 let access_cell a k  = 
   D.see a.content k
