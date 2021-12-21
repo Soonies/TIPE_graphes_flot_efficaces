@@ -20,8 +20,6 @@ type capacity = Capa of int | Infty
 
 type 'a edge = 'a vertex * 'a vertex
 
-type 'a flow = ('a edge -> int) 
-
 type 'a t (** Flow Graph Type, with 'a vertices*)
 
 type 'a vset (**a set of vertices*)
@@ -61,6 +59,8 @@ val size : 'a t -> int(**size of the graph g ,i.e the number of vertices*)
 
 val nb_edge :  'a t -> int (** nb of edges of the graph g*)
 
+val see_label : 'a vertex -> 'a
+
 val see_supply : 'a t -> 'a vertex -> int (**Returns the supply  of the 'a vertex as a `int*)
 
 val see_flow : 'a t -> 'a edge -> int(**Returns the flow  of the 'a edge as a `int*)
@@ -72,8 +72,6 @@ val see_capacity : 'a t -> 'a edge -> capacity  (**Returns the capacity  of the 
 (*~MUTATORS~*)
 
 val set_flow_edge : 'a t-> 'a edge -> int -> unit(** set_flow g e x-> assigns the flow x to the 'a edge e*)
-
-val set_flow_graph : 'a t -> 'a flow -> unit
 
 val set_cost : 'a t -> 'a edge -> int -> unit (** set_cost g e x-> assigns the cost x to the 'a edge e *)
 
@@ -87,7 +85,13 @@ val set_supply : 'a t -> 'a vertex -> int -> unit (** set_supply g v x-> assigns
 
 val create : 'a list -> 'a t (**[create ls] Creates a graph with the vertices of the list [ls] all with 0 supply, and no edges.    Theset of vertices is FIXED and cannot be extended, modified nor suppressed.*)
 
+val make_vertex :  'a -> 'a vertex
+
+val make_edge : 'a vertex  -> 'a vertex -> 'a edge  
+
 val add_edge : 'a t -> 'a edge -> unit(** add_edge g e -> adds an 'a edge e to the graph g*)
+
+val add_edge_list : 'a t -> 'a edge list -> unit
 
 val delete_edge : 'a t -> 'a edge -> unit(** delete_edge g e -> removes the 'a edge e from the graph g*)
 
@@ -129,3 +133,37 @@ val iter_vset : ('a vertex -> unit) -> 'a vset -> unit
 val prede_ver : 'a t -> 'a vertex -> 'a vset(**Lists the Predecessors of the 'a vertex*)
 
 val succ_ver : 'a t -> 'a vertex -> 'a vset(**Lists the succcessor of the 'a vertex*)
+
+
+
+(*#fast observers constructors and mutators and  #*)
+
+
+val fmake_edge :  'a  -> 'a  -> 'a edge (*f stands for "fast"*)
+
+val fadd_edge :  'a t -> 'a -> 'a -> unit (** [ fadd_edge g i j ] make an edge of i  and j *)
+
+
+
+val fsee_supply : 'a t -> 'a  -> int (**Returns the supply  of the 'a vertex as a `int*)
+
+val fsee_flow : 'a t -> 'a  -> 'a  -> int(**Returns the flow  of the 'a edge as a `int*)
+
+val fsee_cost : 'a t-> 'a  -> 'a  -> int(**Returns the cost  of the 'a edge as a `int*)
+
+val fsee_capacity : 'a t -> 'a  -> 'a ->  capacity  (**Returns the capacity  of the 'a edge as a `Capacity*)
+
+
+
+
+
+val fset_flow_edge : 'a t-> 'a  -> 'a ->  int -> unit(** set_flow_edge g e x-> assigns the flow x to the 'a edge e*)
+
+val fset_cost : 'a t -> 'a  -> 'a -> int -> unit (** set_cost g e x-> assigns the cost x to the 'a edge e *)
+
+val fset_capacity : 'a t-> 'a  -> 'a -> capacity -> unit(** set_capacity g e x -> assigns the capacity x to the 'a edge e*)
+
+val fset_supply : 'a t -> 'a -> int -> unit (** set_supply g v x-> assigns the supply x to the 'a vertex v  *)
+
+
+

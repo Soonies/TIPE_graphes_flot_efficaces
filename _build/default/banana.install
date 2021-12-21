@@ -7,6 +7,9 @@ lib: [
   "_build/install/default/lib/banana/basics/basics.cmx" {"basics/basics.cmx"}
   "_build/install/default/lib/banana/basics/basics.cmxa" {"basics/basics.cmxa"}
   "_build/install/default/lib/banana/basics/basics.ml" {"basics/basics.ml"}
+  "_build/install/default/lib/banana/basics/basics__Display.cmi" {"basics/basics__Display.cmi"}
+  "_build/install/default/lib/banana/basics/basics__Display.cmt" {"basics/basics__Display.cmt"}
+  "_build/install/default/lib/banana/basics/basics__Display.cmx" {"basics/basics__Display.cmx"}
   "_build/install/default/lib/banana/basics/basics__Dynamic_array.cmi" {"basics/basics__Dynamic_array.cmi"}
   "_build/install/default/lib/banana/basics/basics__Dynamic_array.cmt" {"basics/basics__Dynamic_array.cmt"}
   "_build/install/default/lib/banana/basics/basics__Dynamic_array.cmti" {"basics/basics__Dynamic_array.cmti"}
@@ -19,6 +22,7 @@ lib: [
   "_build/install/default/lib/banana/basics/basics__Linked_array.cmt" {"basics/basics__Linked_array.cmt"}
   "_build/install/default/lib/banana/basics/basics__Linked_array.cmti" {"basics/basics__Linked_array.cmti"}
   "_build/install/default/lib/banana/basics/basics__Linked_array.cmx" {"basics/basics__Linked_array.cmx"}
+  "_build/install/default/lib/banana/basics/display.ml" {"basics/display.ml"}
   "_build/install/default/lib/banana/basics/dynamic_array.ml" {"basics/dynamic_array.ml"}
   "_build/install/default/lib/banana/basics/dynamic_array.mli" {"basics/dynamic_array.mli"}
   "_build/install/default/lib/banana/basics/flow_graph.ml" {"basics/flow_graph.ml"}

@@ -1,3 +1,7 @@
+(** @canonical Basics.Display *)
+module Display = Basics__Display
+
+
 (** @canonical Basics.Dynamic_array *)
 module Dynamic_array = Basics__Dynamic_array
 

@@ -11,20 +11,18 @@ type capacity  = Capa of int | Infty
 
 type 'a edge = 'a vertex * 'a vertex
 
-type 'a flow  =  ('a edge -> int) 
-
 type 'a edge_att_rec =  {edge : 'a edge ; cntnt : int array }
 
 
 type 'a t = {
   v : ('a vertex, int array) H.t ; (* dico attributs des vertex. Attribue array is of type [| i (unique index of the vertex) , b(i)|]*)
   e: ('a edge, int) H.t ; (**dico index des edges dans [edges] *)
+  edges : 'a edge_att_rec D.t ; (*edges et attributs*)
   fptr : int L.t ; (* Chaine d'adjacence emmanant*)
   bptr : int L.t ; (* Chaine d'adjacence incident*)
   frange: int array;(*range pour la fchain*)
   brange: int array;(*range pr la bchain*)
-  edges : 'a edge_att_rec D.t ; (*edges et attributs*)
-  mutable f : 'a flow
+  (*mutable f : 'a flow *)
   }
 
   
@@ -71,6 +69,8 @@ let size g  = H.length g.v
 
 let nb_edge  g  = H.length g.e
 
+let see_label (V i )  = i  
+
 let see_supply g v = (H.find g.v v).(1)
 
 let index_edge g e  = H.find g.e e 
@@ -88,8 +88,10 @@ let modify_vertex_attribute g v x attribute =
 
 let set_vertex_index g v x  = modify_vertex_attribute g v x "indx"
 
+
 let modify_edge_field g n i x = (D.see g.edges n).cntnt.(i)<- x
 
+(**[see_edge_field g n i ] get access to the *)
 let see_edge_field g n i = (D.see g.edges n).cntnt.(i)
 
 (**[do_edge_attribute g e x attribute f'] apply the action [f'] on the attribute [attribute] of [e], an edge of [g] and [x], a value. *)
@@ -100,10 +102,10 @@ let do_edge_attribute g e x attribute f' =
   | "tail" | "head"-> failwith "cannot modify tail or head"
   | "capa" -> f 0 x
   | "cost" -> f 1 x
-  (*|"flow" ->*)
-  |"bindx" -> f 2 x
+  | "bindx" -> f 2 x
   | "findx" -> f 3 x
-  | _ ->  failwith "Invalid argument, should be tail/cost/capa/bindx/findx"
+  | "flow" ->  f 4 x
+  | _ ->  failwith "Invalid argument, should be tail/cost/capa/bindx/findx/flow"
 
 
 let modify_edge_attribute g e x attribute = 
@@ -111,6 +113,10 @@ let modify_edge_attribute g e x attribute =
 
 let see_edge_attribute g e attribute = 
   do_edge_attribute g e () attribute (fun x y z _-> see_edge_field x y z) 
+
+
+(**controversial*)
+let see_flow g e = see_edge_attribute g e "flow"
 
 
 let see_cost g e  = see_edge_attribute g e "cost"
@@ -123,19 +129,7 @@ let see_capacity g e   =
   | _ -> failwith "uh oh, capacite invalide"
 
 
-(**controversial*)
-let see_flow g e = g.f e
-
-let set_flow_edge g e x = 
-  let f' edge  = 
-    if edge = e then
-     x
-    else
-    g.f edge
-  in 
-    g.f <- f'
-
-let set_flow_graph g f  = g.f <- f
+let set_flow_edge g e x = modify_edge_attribute g e x "flow"
 
 let set_cost g e x  = modify_edge_attribute g e x "cost"
 
@@ -162,7 +156,6 @@ let create ls =
   frange =  Array.make (2*n+1) (0); 
   brange= Array.make (2*n+1) (0); 
   edges =  D.create n; 
-  f = (fun _ -> 0)
   } in 
   
   let new_vertex_attribute_array ()  = Array.make 2 0 in 
@@ -180,6 +173,10 @@ let create ls =
   
   g
 
+
+let  make_vertex v = V v 
+
+let make_edge i j :'a edge= i , j
 
 let see_begining_range range v  = range.(2*(v-1))
 
@@ -212,7 +209,7 @@ let  add_to_chain g i x mode =
 
 let add_edge g e = 
   let (V a, V b) = e in
-  let new_edge_attribute_record  =  {edge = e ; cntnt = Array.make 4 0} in 
+  let new_edge_attribute_record  =  {edge = e ; cntnt = Array.make 5 0} in 
   let n_edge  = D.add g.edges new_edge_attribute_record in 
   
   H.add g.e e n_edge;
@@ -222,6 +219,8 @@ let add_edge g e =
   set_findx g e findx ; 
   set_bindx g e bindx
 
+
+let add_edge_list g ls  = List.iter (fun x -> add_edge g x ) ls
 
 (**[remove_from_chain g   indx i mode] removes the element of index [indx] in the chain [mode] AND updates the associated range for the vertex of index [i] *)
 let remove_from_chain g indx i mode  =
@@ -312,3 +311,48 @@ let adj_ver  g v mode  =
 let prede_ver g v = adj_ver g v "prede"
 
 let succ_ver g v = adj_ver g v "succ"
+
+
+
+
+
+(*et la on s'amuse avec les fonctions d'ordre sup UwU ;3*)
+
+let fmake_edge i j :'a edge =  V i, V j 
+
+let fadd_edge g i j  =  
+  let e  =  fmake_edge i j in 
+  add_edge g e
+
+
+let fast_op_vert g f = 
+  fun v  -> let vert =  make_vertex v in f g vert 
+
+let fast_op_edge g f =   
+  fun  i j -> let e =  fmake_edge i j  in f g e 
+
+
+let fast_mut_vert g f  = 
+  fun  v x-> let vert =  make_vertex v  in f g vert x 
+
+let fast_mut_edge g f = 
+  fun  i j x-> let e =  fmake_edge i j  in f g e x 
+
+
+
+let fsee_supply g = fast_op_vert g see_supply
+
+let fsee_flow g  =  fast_op_edge g see_flow
+
+let fsee_cost g  = fast_op_edge g see_cost
+
+let fsee_capacity g = fast_op_edge g see_capacity
+
+let fset_flow_edge g = fast_mut_edge g set_flow_edge
+
+let fset_cost g = fast_mut_edge g set_cost
+
+
+let fset_capacity g = fast_mut_edge g set_capacity
+
+let fset_supply g  = fast_mut_vert g set_supply

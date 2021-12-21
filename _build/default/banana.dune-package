@@ -15,6 +15,7 @@
   (wrapped
    (main_module_name Basics)
    (modules
+    ((name Display) (obj_name basics__Display) (visibility public) (impl))
     ((name Dynamic_array)
      (obj_name basics__Dynamic_array)
      (visibility public)
