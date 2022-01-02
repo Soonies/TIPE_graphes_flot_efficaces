@@ -1,0 +1,19 @@
+module P  =  Plplot
+
+let xmin,ymin = 0.,0.
+let xmax,ymax = 1.,1.
+
+let xs = Array.init 101 (fun x-> float_of_int x /.101.)
+
+let ys = Array.init 101 (fun x-> (float_of_int x /.101.)**2.) 
+
+let () =
+  P.plparseopts Sys.argv [PL_PARSE_FULL] ; 
+  P.plinit ();
+  P.plenv xmin xmax ymin ymax 0 0 ;
+  P.pllab "x" "y=100 x#u2#d" "Simple PLplot demo of a 2D line plot" ;
+  P.plline xs ys;
+  P.plschr 0. 10.5; 
+  P.plstring [| 0.5|] [| 0.5|] "•" ;
+  P.pljoin 0. 0. 1. 1.;
+  P.plend ()

@@ -37,6 +37,22 @@ let see a k =
 with
   |Not_found ->  raise (Invalid_index k )   
 
+
+let get_1_elmnt a = 
+  let resultat  = ref [] in 
+
+  let f x y _= 
+    resultat := (x,y):: !resultat ; 
+    failwith "fini"
+
+  in
+  (  try  
+    H.fold f a.tbl ()
+  with
+    |  Failure _ -> () )
+  ;  !resultat |> List.hd |> snd
+
+
 (**adds the new element then updates [next_index] to its new value (depending on whether we have just filled a free pace or if we are at the end of the array)*)
 let add a x = 
   let length  =  size a in

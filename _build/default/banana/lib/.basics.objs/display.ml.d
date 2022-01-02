@@ -1,1 +1,1 @@
-banana/lib/display.ml: Flow_graph Graph Sys
+banana/lib/display.ml: Flow_graph Graph Plplot Sys

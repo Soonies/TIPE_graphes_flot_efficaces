@@ -10,5 +10,9 @@ module Dynamic_array = Basics__Dynamic_array
 module Flow_graph = Basics__Flow_graph
 
 
+(** @canonical Basics.Generate *)
+module Generate = Basics__Generate
+
+
 (** @canonical Basics.Linked_array *)
 module Linked_array = Basics__Linked_array

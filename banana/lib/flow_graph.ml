@@ -16,7 +16,7 @@ type 'a edge_att_rec =  {edge : 'a edge ; cntnt : int array }
 
 type 'a t = {
   v : ('a vertex, int array) H.t ; (* dico attributs des vertex. Attribue array is of type [| i (unique index of the vertex) , b(i)|]*)
-  e: ('a edge, int) H.t ; (**dico index des edges dans [edges] *)
+  e: ('a edge, int) H.t ; (*dico index des edges dans [edges] *)
   edges : 'a edge_att_rec D.t ; (*edges et attributs*)
   fptr : int L.t ; (* Chaine d'adjacence emmanant*)
   bptr : int L.t ; (* Chaine d'adjacence incident*)
@@ -127,6 +127,38 @@ let see_capacity g e   =
   | x when x>=0 -> Capa x 
   | -1 -> Infty
   | _ -> failwith "uh oh, capacite invalide"
+
+
+
+let get_1_edge g = 
+  if is_empty g then failwith "empty graph" else
+    (D.get_1_elmnt g.edges).edge
+
+let get_1_vert g =  g |> get_1_edge |> fst
+
+
+let  get_1_of_blank  key g = 
+  if is_empty g then failwith "Empty graph" else
+  match key with
+  | "capa" | "flow" | "cost" ->   let e = get_1_edge g in 
+                                  see_edge_attribute g e key 
+
+  | "supply"-> let v  =  get_1_vert g in see_supply g v 
+  | _ -> failwith "pa bon key"
+
+
+let get_1_capa g  = 
+  let u  =  get_1_of_blank "capa" g in
+  if u < 0 then
+    Infty 
+  else 
+    Capa u
+
+let get_1_flow g  = get_1_of_blank "flow" g 
+
+let get_1_cost g  = get_1_of_blank "cost" g
+
+let get_1_supply  g = get_1_of_blank "supply" g
 
 
 let set_flow_edge g e x = modify_edge_attribute g e x "flow"

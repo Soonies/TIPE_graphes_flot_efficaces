@@ -8,7 +8,7 @@
  (archives (byte basics/basics.cma) (native basics/basics.cmxa))
  (plugins (byte basics/basics.cma) (native basics/basics.cmxs))
  (native_archives basics/basics.a)
- (requires ocamlgraph)
+ (requires ocamlgraph plplot)
  (main_module_name Basics)
  (modes byte native)
  (modules
@@ -26,6 +26,7 @@
      (visibility public)
      (impl)
      (intf))
+    ((name Generate) (obj_name basics__Generate) (visibility public) (impl))
     ((name Linked_array)
      (obj_name basics__Linked_array)
      (visibility public)

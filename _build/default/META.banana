@@ -2,7 +2,7 @@ package "basics" (
   directory = "basics"
   version = "dev"
   description = "Basics Imprementations de graphes de flot et fonctionnelles"
-  requires = "ocamlgraph"
+  requires = "ocamlgraph plplot"
   archive(byte) = "basics.cma"
   archive(native) = "basics.cmxa"
   plugin(byte) = "basics.cma"

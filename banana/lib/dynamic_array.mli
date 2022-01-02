@@ -23,6 +23,8 @@ val size : 'a t -> int (**return the number of elements contained in the array*)
 val see: 'a t -> int -> 'a  (** see content of the ith  cell. An array is 0-indexed*)
 
 val is_empty : 'a t -> bool
+
+val get_1_elmnt : 'a t -> 'a (** get an element from the array. Non-deterministic. Not random.*)
 (***MUTATORS**)
 
 val add:  'a t -> 'a -> int (** [add a x] ->> add [x] to the array [a] and returns its index (pseudo random acces). The latter won't change until the element is eventually supressed from the array, in which case the newly freed space could be reattributed to a new element *)

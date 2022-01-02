@@ -69,6 +69,19 @@ val see_cost : 'a t-> 'a edge -> int(**Returns the cost  of the 'a edge as a `in
 
 val see_capacity : 'a t -> 'a edge -> capacity  (**Returns the capacity  of the 'a edge as a `Capacity*)
 
+val get_1_edge: 'a t  -> 'a edge
+
+val get_1_vert :  'a t  -> 'a vertex
+
+val get_1_capa :  'a t  ->  capacity
+
+val get_1_flow :  'a t  -> int
+
+val get_1_cost :  'a t  -> int
+
+val get_1_supply : 'a t  -> int
+
+
 (*~MUTATORS~*)
 
 val set_flow_edge : 'a t-> 'a edge -> int -> unit(** set_flow g e x-> assigns the flow x to the 'a edge e*)
