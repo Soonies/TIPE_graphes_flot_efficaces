@@ -10,9 +10,13 @@ module Dynamic_array = Basics__Dynamic_array
 module Flow_graph = Basics__Flow_graph
 
 
-(** @canonical Basics.Generate *)
-module Generate = Basics__Generate
+(** @canonical Basics.Flow_graphs_algo *)
+module Flow_graphs_algo = Basics__Flow_graphs_algo
 
 
 (** @canonical Basics.Linked_array *)
 module Linked_array = Basics__Linked_array
+
+
+(** @canonical Basics.Resolution_strategies *)
+module Resolution_strategies = Basics__Resolution_strategies

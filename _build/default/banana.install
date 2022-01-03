@@ -18,21 +18,25 @@ lib: [
   "_build/install/default/lib/banana/basics/basics__Flow_graph.cmt" {"basics/basics__Flow_graph.cmt"}
   "_build/install/default/lib/banana/basics/basics__Flow_graph.cmti" {"basics/basics__Flow_graph.cmti"}
   "_build/install/default/lib/banana/basics/basics__Flow_graph.cmx" {"basics/basics__Flow_graph.cmx"}
-  "_build/install/default/lib/banana/basics/basics__Generate.cmi" {"basics/basics__Generate.cmi"}
-  "_build/install/default/lib/banana/basics/basics__Generate.cmt" {"basics/basics__Generate.cmt"}
-  "_build/install/default/lib/banana/basics/basics__Generate.cmx" {"basics/basics__Generate.cmx"}
+  "_build/install/default/lib/banana/basics/basics__Flow_graphs_algo.cmi" {"basics/basics__Flow_graphs_algo.cmi"}
+  "_build/install/default/lib/banana/basics/basics__Flow_graphs_algo.cmt" {"basics/basics__Flow_graphs_algo.cmt"}
+  "_build/install/default/lib/banana/basics/basics__Flow_graphs_algo.cmx" {"basics/basics__Flow_graphs_algo.cmx"}
   "_build/install/default/lib/banana/basics/basics__Linked_array.cmi" {"basics/basics__Linked_array.cmi"}
   "_build/install/default/lib/banana/basics/basics__Linked_array.cmt" {"basics/basics__Linked_array.cmt"}
   "_build/install/default/lib/banana/basics/basics__Linked_array.cmti" {"basics/basics__Linked_array.cmti"}
   "_build/install/default/lib/banana/basics/basics__Linked_array.cmx" {"basics/basics__Linked_array.cmx"}
+  "_build/install/default/lib/banana/basics/basics__Resolution_strategies.cmi" {"basics/basics__Resolution_strategies.cmi"}
+  "_build/install/default/lib/banana/basics/basics__Resolution_strategies.cmt" {"basics/basics__Resolution_strategies.cmt"}
+  "_build/install/default/lib/banana/basics/basics__Resolution_strategies.cmx" {"basics/basics__Resolution_strategies.cmx"}
   "_build/install/default/lib/banana/basics/display.ml" {"basics/display.ml"}
   "_build/install/default/lib/banana/basics/dynamic_array.ml" {"basics/dynamic_array.ml"}
   "_build/install/default/lib/banana/basics/dynamic_array.mli" {"basics/dynamic_array.mli"}
   "_build/install/default/lib/banana/basics/flow_graph.ml" {"basics/flow_graph.ml"}
   "_build/install/default/lib/banana/basics/flow_graph.mli" {"basics/flow_graph.mli"}
-  "_build/install/default/lib/banana/basics/generate.ml" {"basics/generate.ml"}
+  "_build/install/default/lib/banana/basics/flow_graphs_algo.ml" {"basics/flow_graphs_algo.ml"}
   "_build/install/default/lib/banana/basics/linked_array.ml" {"basics/linked_array.ml"}
   "_build/install/default/lib/banana/basics/linked_array.mli" {"basics/linked_array.mli"}
+  "_build/install/default/lib/banana/basics/resolution_strategies.ml" {"basics/resolution_strategies.ml"}
   "_build/install/default/lib/banana/dune-package"
   "_build/install/default/lib/banana/opam"
 ]
