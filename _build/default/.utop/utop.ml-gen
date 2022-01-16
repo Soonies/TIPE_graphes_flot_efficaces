@@ -21,6 +21,7 @@ Clflags.include_dirs :=
   ; "/home/soon/.opam/cs3110-2021fa/lib/ocamlgraph"
   ; "/home/soon/.opam/cs3110-2021fa/lib/ocplib-endian"
   ; "/home/soon/.opam/cs3110-2021fa/lib/ocplib-endian/bigstring"
+  ; "/home/soon/.opam/cs3110-2021fa/lib/plplot"
   ; "/home/soon/.opam/cs3110-2021fa/lib/react"
   ; "/home/soon/.opam/cs3110-2021fa/lib/result"
   ; "/home/soon/.opam/cs3110-2021fa/lib/seq"

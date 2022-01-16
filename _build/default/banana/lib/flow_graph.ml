@@ -116,18 +116,41 @@ let see_edge_attribute g e attribute =
 
 
 (**controversial*)
-let see_flow g e = see_edge_attribute g e "flow"
+
+let edge_in_graph g e  = 
+  try 
+    let _ = H.find g.e e in 
+    true
+with 
+  | Not_found -> false
 
 
-let see_cost g e  = see_edge_attribute g e "cost"
+
+let see_flow g e = 
+  let (i,j) = e  in  
+  if edge_in_graph g  e then
+     see_edge_attribute g  e "flow"
+  else if  edge_in_graph g  (j,i) then 
+    -1* see_edge_attribute g (j,i) "flow" 
+  else 
+   0
+
+
+let see_cost g e  = 
+  if edge_in_graph g e then 
+    see_edge_attribute g e "cost"
+  else 
+  failwith " this edge does no exist"
+
 
 let see_capacity g e   =
-  let c = see_edge_attribute g e "capa" in 
-  match c with 
-  | x when x>=0 -> Capa x 
-  | -1 -> Infty
-  | _ -> failwith "uh oh, capacite invalide"
-
+  if edge_in_graph g e then 
+    let c = see_edge_attribute g e "capa" in 
+    match c with 
+    | x when x >= 0 -> Capa x 
+    | -1 -> Infty
+    | _ -> failwith "uh oh, capacite invalide"
+  else Capa 0
 
 
 let get_1_edge g = 

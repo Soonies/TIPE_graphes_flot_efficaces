@@ -1,5 +1,5 @@
 (************************)
-(*     for the time being, we use disctionnaries to implement
+(*   we use disctionnaries to implement
 a resizable array 
 
 if A is an array containing a0, a1 ... an |]
@@ -8,7 +8,7 @@ if A is an array containing a0, a1 ... an |]
 module H = Hashtbl
 module S = Stack
 
-type 'a t  = {next_index : int S.t ; tbl : (int,'a) H.t } (** nnext_index indicates the index of the next element 
+type 'a t  = {next_index : int S.t ; tbl : (int,'a) H.t } (** next_index indicates the index of the next element 
 to be added, tbl is the hash table representing the array*)
 
 

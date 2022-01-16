@@ -12,8 +12,6 @@
 
 
 
-
-
 type 'a vertex  (**Vertices are labled by `int (pr print et pr les functeurs)*)
 
 type capacity = Capa of int | Infty 
@@ -59,15 +57,22 @@ val size : 'a t -> int(**size of the graph g ,i.e the number of vertices*)
 
 val nb_edge :  'a t -> int (** nb of edges of the graph g*)
 
+val edge_in_graph :  'a t -> 'a edge ->  bool
+
 val see_label : 'a vertex -> 'a
 
 val see_supply : 'a t -> 'a vertex -> int (**Returns the supply  of the 'a vertex as a `int*)
 
-val see_flow : 'a t -> 'a edge -> int(**Returns the flow  of the 'a edge as a `int*)
+val see_flow : 'a t -> 'a edge -> int(**Returns the flow  of the 'a edge (i,j) if (i,j) is in g, - the flow of (j,i) if (j,i) is in g and 0 otherwise *)
 
-val see_cost : 'a t-> 'a edge -> int(**Returns the cost  of the 'a edge as a `int*)
+val see_cost : 'a t-> 'a edge -> int (**Returns the cost  of the 'a edge as a `int*)
 
 val see_capacity : 'a t -> 'a edge -> capacity  (**Returns the capacity  of the 'a edge as a `Capacity*)
+
+
+(*_>>>>> tout doux-> test if vertex or edge belong to graph*)
+
+
 
 val get_1_edge: 'a t  -> 'a edge
 
