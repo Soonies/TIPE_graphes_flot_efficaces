@@ -20,11 +20,17 @@ module DisplayFunct (M:Graph) =
        f (G.see_label v) ^ ": b"^supply
 
     let get_edge_label g e = 
-      let capa = match G.see_capacity g e with 
-                  | Infty -> "/Infty"
-                  | Capa x ->"/" ^ (string_of_int x)
+      let capa = let u  =  G.see_capacity g e  in 
+                  if G.is_infty_capa g u then "/Infty"
+                  else "/" ^ (string_of_int u)
+                
       in
-      string_of_int (G.see_flow g e ) ^ capa ^"~"^(string_of_int (G.see_cost g e))
+      let c  =  G.see_cost g e  in
+      string_of_int (G.see_flow g e ) ^ capa ^"~"^(
+        ( if G.is_pos_infty_cost g  c then 
+            "+Infty" 
+          else if G.is_neg_infty_cost g c then
+             "-Infty"  else string_of_int c ))
 
 
     module Ver  = struct
@@ -70,17 +76,19 @@ module DisplayFunct (M:Graph) =
       ()
   end 
 
-  module type TempGraph = sig
+module type TempGraph = sig
   val input_g : (int*int) G.t
  
  val string_of_a : int*int -> string
  
 end 
+
 module DisplayPlane (M: TempGraph  ) = struct
   let g0 = M.input_g
 
   let f  =  float_of_int 
 
+  
   let scale_of_smth  g iterf watchf sample= 
 
     let max_supply = ref sample in 
@@ -100,7 +108,7 @@ module DisplayPlane (M: TempGraph  ) = struct
     (fun  x ->
       let b  = f !max_supply in
       let a  = f !min_supply in
-      1. /. (b -. a) *. x -. a /. (a -.b))
+      1. /. (b -. a) *. x -. a /. (b -.a))
     
   let get_borders g  = 
     let rnd =  g |>  G.get_1_vert |> G.see_label |> fst |> f in  
@@ -108,10 +116,10 @@ module DisplayPlane (M: TempGraph  ) = struct
     let xma = ref rnd in
     let ymi = ref rnd in
     let yma = ref rnd in
+  
     let parse v  = 
 
       let x,y =  G.see_label v in
-      print_int x ; print_int y ;
       let x,y = f x, f y in   
       
       if  !xmi >  x then 
@@ -124,8 +132,9 @@ module DisplayPlane (M: TempGraph  ) = struct
         yma:= y;
     in
     G.iter_ver parse g ; 
-    print_float !xmi ; print_float !xma ; print_float !ymi ; print_float !yma;
-      (!xmi -. 0.5  , !xma +. 0.5 , !ymi -. 0.5, !yma+. 0.5)
+    let ygap  =  0.2 *.(!yma -. !ymi) in 
+    let xgap  = 0.2*.(!xma -. !xmi) in
+    (!xmi -. xgap , !xma +. xgap , !ymi -. ygap, !yma+. ygap)
 
   (**g is supposed to verify the balance property, with at least one  non zero supply, doit aussi renvoyer le min des coordonnees*)
   let parse_vertices g =
@@ -152,20 +161,27 @@ module DisplayPlane (M: TempGraph  ) = struct
       let x2,y2  = j  in 
 
       let flow = G.see_flow g e  in 
+      if flow = 0 then () else(
       let ratio = (flow |> f |> flow_scale) in
       P.plwidth (ratio*. 10.) ; 
       P.plcol1 ratio;
       P.pljoin (f x1) (f y1) (f x2) (f y2);
-      P.plstring [|f x2|] [| f y2|] "|>"
+      P.plstring [|f x2|] [| f y2|] "|>")
     in
     G.iter_edg parse_edg g 
 
+  
+  let r  =  Array.init 256 (fun x->if x >= 128 then 255 else 2*x)
+  let g  = Array.init 256 (fun x-> max (2*(x-128)) 0) 
+  let b  =   Array.init 256 (fun x->max (255 - (2*x)) 0)
+
+
   let make_image () = 
-    
+    P.plsdev "pngqt" ;
+    P.plsfnam "yasss.png" ;
     P.plinit () ; 
-    print_endline "here";
+    P.plscmap1 r g b ; 
     let xmin, xmax, ymin, ymax = get_borders g0 in 
-    print_endline "here now";
     P.plenv xmin xmax ymin ymax 0 0 ;
     P.pllab "x" "y" "Graph representation" ;
     parse_edges g0;

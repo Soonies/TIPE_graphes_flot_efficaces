@@ -1,5 +1,5 @@
 (************************)
-(*     for the time being, we use disctionnaries to implement
+(*   we use dictionnaries to implement
 a resizable array 
 
 if A is an array containing a0, a1 ... an |]
@@ -8,7 +8,7 @@ if A is an array containing a0, a1 ... an |]
 module H = Hashtbl
 module S = Stack
 
-type 'a t  = {next_index : int S.t ; tbl : (int,'a) H.t } (** nnext_index indicates the index of the next element 
+type 'a t  = {next_index : int S.t ; tbl : (int,'a) H.t } (** next_index indicates the index of the next element 
 to be added, tbl is the hash table representing the array*)
 
 
@@ -31,12 +31,14 @@ let size a = H.length a.tbl
 
 let is_empty a  = size a = 0 
 
-let see a k = 
-   try
-  H.find a.tbl k 
-with
-  |Not_found ->  raise (Invalid_index k )   
+let memi a i  = 
+  H.mem a.tbl i
 
+let see a k =
+  if memi a k then 
+    H.find a.tbl k
+  else
+   raise (Invalid_index k ) 
 
 let get_1_elmnt a = 
   let resultat  = ref [] in 
@@ -50,7 +52,8 @@ let get_1_elmnt a =
     H.fold f a.tbl ()
   with
     |  Failure _ -> () )
-  ;  !resultat |> List.hd |> snd
+  ;  
+  !resultat |> List.hd |> snd
 
 
 (**adds the new element then updates [next_index] to its new value (depending on whether we have just filled a free pace or if we are at the end of the array)*)
@@ -65,10 +68,18 @@ let add a x =
 
 (**updates [next_index] to point to the newly free space then frees up the space*)
 let remove a k = 
+  if memi a k then (
   S.push k a.next_index  ;
-  H.remove a.tbl k
+  H.remove a.tbl k)
+  else
+   raise (Invalid_index k)
 
-let set a k x =  H.replace a.tbl k x
+
+let set a k x =  
+  if memi a k then 
+    H.replace a.tbl k x
+  else
+    raise (Invalid_index k)
 
 let iter f a = H.iter (fun _ x -> f x) a.tbl (*f ignores the index of the item*)
 

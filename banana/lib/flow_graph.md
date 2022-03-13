@@ -7,6 +7,11 @@ We use two custom-made data-structures : *Dynamic Arrays* and *Linked arrays* al
 We use an implementation inspired by the foward and reverse star representation described in the book _Network algorithms_, which has been modified to allow for the suppression of edges while guarantying an access to the successors and predecessors of a vertex in O(1) time.
 
 A graph is implemented as a record with multiple fields:
+
+ 1. mutable uU  :  int ;
+    
+  2. mutable cC : int  ; 
+0.  `v_representant` 1 vertex amongst the other. No particular meaning. needed for the get_1_of function ( no other way to get a random vertex without iterating through the whole graph)
 1. `v : ('a vertex, int array)` Dictionnary storing the attributes of the vertices
     * keys :  ` 'a vertex `
     * entry : `a : int array`.
@@ -17,10 +22,14 @@ A graph is implemented as a record with multiple fields:
     * keys :  `'a edges`
     * entries : `int` the unique index of the edge 
 
-3. `edges : 'a edge_att_rec D.t` Dynamic_Array storing the attributes of the edge as a  `'a edge_att_rec =  {edge : 'a edge ; cntnt : int array }` record
+3. `edges : 'a edge_att_rec D.t` Dynamic_Array storing the attributes of the edge as a  `'a edge_att_rec =  {edge : 'a edge ; cntnt : cout ref *int array }` record
     * at the index `n` corresponding to an edge , the content of the record is as such: 
 
-      `[|capa;cout;bindx;findx; flow|]` 
+      ` ref |Infty |NInfty | C of int * [|capa;bindx;findx; flow|]` (*justement on a un prblm, je veux mettre une capa infinie donc j'ai le choix du -1 mais il faudra tout modifier
+      
+      Changement a faire :  Ok -  infty capa  =  -1, c un pointeur a g.uU
+                            - Infty cost :  + infini :  -1
+                                            - infi : -2 ok?*)
 
 4.  `fptr : int L.t` and `bptr : int L.t` // Linked arrays of the pointer-chains for the successors and predecessors of vertices (resp.) 
 

@@ -4,6 +4,7 @@
 
 type 'a t
 
+type pointer = |Nil | P of int
 
 
 
@@ -21,9 +22,9 @@ val finish : 'a t -> int (**index of the end/finishing of the chain. Not called 
 
 val see: 'a t -> int -> 'a  (** see content of the ith  cell. An array is 0-indexed*)
 
-val previous :  'a t -> int -> int  (** [previous a k] index of the predecessor to the k-ith element of the array [a]*)
+val previous :  'a t -> int -> pointer  (** [previous a k] index of the predecessor to the k-ith element of the array [a]*)
 
-val next : 'a t -> int -> int  (** [next a k] index of the successor to the k-ith element of the array [a]*)
+val next : 'a t -> int -> pointer  (** [next a k] index of the successor to the k-ith element of the array [a]*)
 
 (***MUTATORS**)
 
