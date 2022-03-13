@@ -25,7 +25,7 @@ A graph is implemented as a record with multiple fields:
 3. `edges : 'a edge_att_rec D.t` Dynamic_Array storing the attributes of the edge as a  `'a edge_att_rec =  {edge : 'a edge ; cntnt : cout ref *int array }` record
     * at the index `n` corresponding to an edge , the content of the record is as such: 
 
-      ` ref |Infty |NInfty | C of int * [|capa;||||--cout--||||;bindx;findx; flow|]` (*justement on a un prblm, je veux mettre une capa infinie donc j'ai le choix du -1 mais il faudra tout modifier
+      ` ref |Infty |NInfty | C of int * [|capa;bindx;findx; flow|]` (*justement on a un prblm, je veux mettre une capa infinie donc j'ai le choix du -1 mais il faudra tout modifier
       
       Changement a faire :  Ok -  infty capa  =  -1, c un pointeur a g.uU
                             - Infty cost :  + infini :  -1

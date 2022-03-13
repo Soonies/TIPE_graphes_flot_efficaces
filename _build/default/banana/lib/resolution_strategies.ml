@@ -151,7 +151,7 @@ let from_no_parallel_edges g'  =
   G.iter_edg f g';
   g
 
-(**copies the graph and adds the vertices in ls *)
+(**copies the graph  edges and attributes + adds the vertices in ls (doesnt copy the supplies) |input ~graph ~vertex list to be added | Output : new graph *)
 let copy_graph_including_vertices g ls = 
   
   let ls_vert =  ls @ ( G.fold_ver (fun x ls ->G.see_label x ::ls ) g [] ) in 
@@ -184,16 +184,11 @@ let copy_graph_including_vertices g ls =
 
 (** reduces a multi source network to sing sourcce sing sink: ok! *)
 let to_s_source_s_sink g = 
-
+ 
   let s  =  G.make_vertex (N (-1,-1)) in 
   let t  =  G.make_vertex (N (square_dim +1,  square_dim +1)) in 
-
-  let ls_vert =  N (-1,-1) :: N (square_dim + 1  ,  square_dim +1) :: ( G.fold_ver (fun x ls ->G.see_label x ::ls ) g [] ) in 
-  let g'  =  G.create ls_vert  in 
-  G.iter_edg (fun x -> G.add_edge g' x ) g;
-  G.iter_edg (fun x -> G.set_cost g' x (G.see_cost g  x) ) g ;
-  G.iter_edg (fun x -> G.set_capacity g' x (G.see_capacity g  x) ) g;
   
+  let g'   = copy_graph_including_vertices g [N(-1,-1);N (square_dim + 1  ,  square_dim +1) ]in
   let f i =  
     
     let b  = G.see_supply g i in
@@ -400,23 +395,36 @@ let floyd_fulkerson rg find_path =
 (** floyd fulkerson with bfs for shortest path | input : ~redial graph | output  =  none but max flowed*)
 let edmonds_karp rg = floyd_fulkerson rg  (fun g' -> let g = g'.graph in  path_bfs g (g'.s) (g'.t ))
 
-(** retrace predecessor of given vertex in path until loops back at he start | input  : vertex ~ dict of prede | output : vertex path as  list*)
+(** retrace predecessor of given vertex in path until loops back at he start | input  : vertex ~ dict of prede ~ g to have a majoration of number of edges | output : vertex path as  list*)
 let retrace_cycle v prede g =
   if H.length prede  <=1  then failwith "Dict with predecessors has less than 1 vertex passed ( could be empty or just 1) / retrace_path";
   
   
-  let ls  =  ref [v] in
+  let ls  =  ref [] in
   let current  = ref v in  
   let count  =  ref 0  in 
   let m  = G.nb_edge g in 
   try
-    while H.find prede !current <> v do 
+    (*run 1 *)
+    let deja_vu = H.create m in 
+    while not (H.mem deja_vu !current) do
+      if !count > m+1 then failwith "Infinite loop, dict corrupted / retrace_cycle";
+      H.add deja_vu !current ();
+      current := H.find prede !current ;
+      incr count 
+    
+    done;
+    let w =  !current in 
+    ls := [w];
+    count := 0;
+    (*run 2*)
+    while H.find prede !current <> w do 
       if !count > m+1 then failwith "Infinite loop, dict corrupted / retrace_cycle";
       current := H.find prede !current ;
       ls :=  !current::!ls;
       incr count
     done;
-    v::!ls
+    w::!ls
   with
   | Not_found -> failwith " Failed to find a predecessor of a vertex in Dict = Dict corrupted / retrace_cycle " 
 
@@ -434,37 +442,43 @@ let bellmann_ford_neg_cycle rg' =
                 print_int a1; print_string " , "; print_int a2   ; print_string  " | ";  
                 print_int b1; print_string " , "; print_int b2;
               print_string ") " 
-in
+in(*
 let mfff  g e = 
   let i,j  =  e  in 
   mff i ; mff j ;print_string "c  = " ; print_int (G.see_capacity g e) ; print_string "  f  = " ; print_int (G.see_flow g e) ; print_newline (); print_newline ()
-in
+in *)
+
 
 
   let rg =  rg'.graph in
-  let n  = G.size rg in 
+
+  let g  = copy_graph_including_vertices rg [N(-2,-2)] in  (*copy of graph+ slack edge*)
+
+  let s' = G.make_vertex (N(-2,-2) )in  (*slack vertex*)
+
+  let n  = G.size g in 
   let distance_dict =  H.create n  in 
   let prede_dict  =  H.create n  in
-  H.add distance_dict rg'.s 0 ;
-  H.add prede_dict rg'.s rg'.s;
+  H.add distance_dict s' 0 ;
+  H.add prede_dict s' s';
+
+  G.iter_ver (fun v -> G.add_edge g (s',v) ) rg;
   
 
   let relax_edge (u,v)  = 
-   mfff rg (u,v);
       if (H.mem distance_dict u) then (
-        print_endline "here";
 
         let du  = H.find distance_dict u  in 
         if (H.mem distance_dict v) then (
 
           let dv  =  H.find distance_dict v  in 
-          if dv > du +  G.see_cost rg (u,v) then(
-            H.replace distance_dict v (du + G.see_cost rg (u,v)) ; 
+          if dv > du +  G.see_cost g (u,v) then(
+            H.replace distance_dict v (du + G.see_cost g (u,v)) ; 
             H.replace prede_dict v u;
             
           );
         ) else (
-          H.replace distance_dict v (du + G.see_cost rg (u,v) ); 
+          H.replace distance_dict v (du + G.see_cost g (u,v) ); 
           H.replace prede_dict v u;
           
         );
@@ -472,13 +486,18 @@ in
     in 
 
   for _  = 1 to n-1 do 
-    G.iter_edg relax_edge rg ; 
+    G.iter_edg relax_edge g ; 
    done;
 
   (* checks for the presence of neg cycle*)
 
-  let start_cycle  = ref rg'.s  in  (*just to fill in, in the case of the presence of a cycle, this value will be replaced. Otherwise, stays unused*)
+  let start_cycle  = ref s'  in  (*just to fill in, in the case of the presence of a cycle, this value will be replaced. Otherwise, stays unused*)
   let cycle  =  ref None  in 
+
+let print_shit a b =  
+  mff a ; print_string " <- " ; mff b ;  print_newline ()
+
+in
 
   let test_relax_edge (u,v)  = (* if able to relax an edge -> neg cycle *)
       if (H.mem distance_dict u) then (
@@ -487,7 +506,7 @@ in
         if (H.mem distance_dict v) then (
 
           let dv  =  H.find distance_dict v  in 
-          if dv > du +  G.see_cost rg (u,v) then(
+          if dv > du +  G.see_cost g (u,v) then(
             start_cycle := u  ;  
             raise Break
           );
@@ -499,9 +518,11 @@ in
   (try
     G.iter_edg test_relax_edge rg ; 
   with
-    | Break -> cycle :=  Some (retrace_cycle (!start_cycle) prede_dict rg  );
+    | Break -> mff !start_cycle ; H.iter print_shit prede_dict ;
+      cycle :=  Some (retrace_cycle (!start_cycle) prede_dict g  );
   );
   !cycle
+
 
 
 let cycle_canceling rg'  =

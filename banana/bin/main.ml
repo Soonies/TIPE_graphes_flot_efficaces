@@ -10,8 +10,9 @@ module D = Basics.Dynamic_array
 
 
 
-let ls  =  [(100,100);(200,75);(250,200); ]
-let a, b , c = (100,100),(200,75),(250,200)
+
+let a, b , c ,d= (100,100),(200,75),(250,200), (50,75)
+ let ls  =  [a;b;c;d]
 let g = G.create ls
 
 let f i x  = 
@@ -22,8 +23,9 @@ let h  i  j  u c  =
   G.fset_cost g i j c
 
 let () =  f a (5);
-          f b (-2);
-          f c (-3);
+          f b (-1);
+          f c (-10);
+          f d  (6);
           M.complete_graph_of_graph g;
           M.fill_cost g 
           
