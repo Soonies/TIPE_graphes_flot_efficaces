@@ -15,17 +15,17 @@ let a, b , c ,d= (100,100),(200,75),(250,200), (50,75)
  let ls  =  [a;b;c;d]
 let g = G.create ls
 
-let f i x  = 
+let ss i x  = 
   G.fset_supply g i x
 
 let h  i  j  u c  =
   G.fset_capacity g i j u;
   G.fset_cost g i j c
 
-let () =  f a (5);
-          f b (-1);
-          f c (-10);
-          f d  (6);
+let () =  ss a (5);
+          ss b (-1);
+          ss c (10);
+          ss d  (-14);
           M.complete_graph_of_graph g;
           M.fill_cost g 
           
@@ -56,25 +56,19 @@ let mfff  g e =
   mff i ; mff j ;print_string "c  = " ; print_int (G.see_capacity g e) ; print_string "  f  = " ; print_int (G.see_flow g e) ; print_newline (); print_newline ()
   
 
-let f v = 
+let f g v = 
   let x,y = G.see_label v in 
-  print_int x;  print_char ' '; print_int y ; print_char ' '
-
+ print_string " ( "; print_int x; print_string " , "; print_int y  ; print_string " )   b  = " ; print_int (G.see_supply g v) ; print_newline () 
+  
 let ff  g e  = 
   let i,j  =  e  in 
-  f i ; f j ; 
-  print_string "c  = " ;print_int (G.see_capacity g e) ; print_string "  f  = " ;print_int (G.see_flow g e)  ; print_newline ()
+  f  g i ; f g  j ; 
+  print_string "c  = " ;print_int (G.see_capacity g e) ; print_string "  f  = " ;print_int (G.see_flow g e)  ; print_newline (); print_newline () 
+
+let other  =  M.total 4
 
 
 
-let () =  M.edmonds_karp rg  ; 
-          M.cycle_canceling rg ; 
-          M.update_dual_with_residual g'' rg
-
-let other  =  M.from_no_parallel_edges g''.graph 
-
-
-let () = print_int (G.nb_edge other) ;  G.iter_edg (ff other) other
 (**)
 
 (*
@@ -105,19 +99,20 @@ let () = Dis1.convert_dot_to_png "flow_geraph8.dot" "flowegrapheu8.png"
 *)
 
 (*fonction pr print les attrivuts des vertex*)
-
-
-  (*
-let test_succ i  = 
+                                    
+                                    
+  (*                                 
+let test_succ i  =                   
   print_string "pr le vertex: ";  f i ; 
   let voisins =  G.succ_ver g''' i  in
-  G.iter_vset (f) voisins
-
-let ()  =  G.iter_ver test_succ g'''
- let () = G.iter_edg ff g''' 
-
-
- *)
-
-let () = Dis2.make_image ()
-
+  G.iter_vset (f) voisins            
+                                     
+let ()  =  G.iter_ver test_succ g''' 
+ let () = G.iter_edg ff g'''         
+                                     
+                                    
+ *)                                  
+                                     
+let () = Dis2.make_image ()          
+                                     
+                                     
