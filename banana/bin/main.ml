@@ -1,18 +1,18 @@
-(*convention:                                                 *)
-(*          a non existant arc has a capcity of (0,0) and a null cost *)
-
 module G = Basics.Flow_graph
 module M =  Basics.Resolution_strategies
 module Rnd =  Random
 module D = Basics.Dynamic_array
 
+let a, b , c ,d,e,f(*,gg,hh *) = ((113,53),
+(120,70),
+(149,91),
+(205,98),
+(241,110),
+(262,70)(*,
+(270,68),
+(279,180) *))
 
-
-
-
-
-let a, b , c ,d= (100,100),(200,75),(250,200), (50,75)
- let ls  =  [a;b;c;d]
+ let ls  =  [a; b ; c ;d;e;f(*;gg;hh;*)]
 let g = G.create ls
 
 let ss i x  = 
@@ -22,25 +22,17 @@ let h  i  j  u c  =
   G.fset_capacity g i j u;
   G.fset_cost g i j c
 
-let () =  ss a (5);
-          ss b (-1);
-          ss c (10);
-          ss d  (-14);
-          M.complete_graph_of_graph g;
-          M.fill_cost g 
-          
+let () =  ss a (-1);
+            ss b(-1);
+            ss c (-1);
+            ss d (1);
+            ss e (1);
+            ss f(1)(* ;
+            ss gg (1);
+             ss hh (-1)*)
+
+                    
          
-
-
-let g'  = M.to_no_parallel_edges g
-
-let g'' = M.to_s_source_s_sink g'
-
-
-
-let rg  = M.make_residual g''
-
-
 let mff v = match G.see_label v  with
   | M.N x -> let i,j  =  x in 
            print_string " ( "; print_int i; print_string " , "; print_int j  ; print_string " )  "
@@ -65,7 +57,7 @@ let ff  g e  =
   f  g i ; f g  j ; 
   print_string "c  = " ;print_int (G.see_capacity g e) ; print_string "  f  = " ;print_int (G.see_flow g e)  ; print_newline (); print_newline () 
 
-let other  =  M.total 4
+let other  =  M.min_cost g
 
 
 

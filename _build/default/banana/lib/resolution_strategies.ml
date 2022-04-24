@@ -48,9 +48,10 @@ let complete_graph_of_graph g  =
 
 (**fill the edges cost*)
 let fill_cost g  = 
+
   let f (i,j)  = 
     let (i1,i2) ,  (j1,j2)   = G.see_label i , G.see_label j in 
-    let d  = (((i1-j1) |> float_of_int )**2. +. (i2-j2 |> float_of_int )**2.) |> int_of_float in 
+    let d  = (i1-j1) * (i1-j1)  + (i2-j2)*(i2-j2) in 
     G.set_cost g (i,j) d  
   in
    G.iter_edg f g 
@@ -136,7 +137,10 @@ let from_no_parallel_edges g'  =
 
   let parse_aux a b capa cost flow = 
     G.fadd_edge g a b ;
-    G.fset_capacity g a b capa;
+    if G.is_infty_capa g capa then
+      G.fset_infty_capa g a b 
+    else 
+      G.fset_capacity g a b capa;
     G.fset_cost g a b cost;
     G.fset_flow g a b flow
   in
@@ -340,9 +344,16 @@ let make_residual  g'  =
     let (i,j) = e in  
     let c  =  G.see_cost g e in
     let x  =  G.see_flow g e in 
+    let u  =  G.see_capacity g e in 
     if x <  (G.see_capacity g e) then (
       G.add_edge rg e ;
-      G.set_capacity rg  e ( (G.see_capacity g e) - x);
+
+      if  G.is_infty_capa g u then (
+        G.set_infty_capa  rg  e 
+      ) else(
+        G.set_capacity rg  e ( (G.see_capacity g e) - x)
+       );
+
       G.set_cost rg e c)
     ; if x> 0  then (
         G.add_edge rg (j,i);
@@ -387,16 +398,23 @@ let push_flow_residual rg'  p  x =
   let f (i,j) = 
     let cost = G.see_cost rg (i,j) in (*saved fot later in case we have to add the reverse edge*)
     let uij = G.see_capacity rg (i,j) in 
+    
+    ( if not ( G.is_infty_capa rg uij) then (
+        (* no need to change capa, stays unchanged after pushing flow*)
+        if uij -  x > 0 then(
+              uij - x |> G.set_capacity rg (i,j) 
+            )else (
+              G.delete_edge rg (i,j));
 
-    if uij -  x > 0 then(
-      uij - x |> G.set_capacity rg (i,j) 
-    )else (
-      G.delete_edge rg (i,j));
+    )
+    );
 
     if G.edge_in_graph rg (j,i) then ( 
+
       let uji  =  G.see_capacity rg (j,i) in 
+      if not (G.is_infty_capa rg uji) then (
       G.set_capacity rg (j,i ) (uji+x))
-     else(
+    )else(
        G.add_edge rg (j,i);
        G.set_cost rg (j,i) (-cost);
        G.set_capacity rg (j,i) x;
@@ -525,19 +543,54 @@ let bellmann_ford_neg_cycle rg' =
 
 
 let cycle_canceling rg'  =
+
+
+  let mff v = match G.see_label v  with
+  | N x -> let i,j  =  x in 
+           print_string " ( "; print_int i; print_string " , "; print_int j  ; print_string " )  "
+  | C(a,b) -> let a1, a2  =  a in 
+              let b1, b2 = b  in
+              print_string "C(" ;
+                print_int a1; print_string " , "; print_int a2   ; print_string  " | ";  
+                print_int b1; print_string " , "; print_int b2;
+              print_string ") " 
+in 
+let mfff  g e = if not (G.is_infty_capa g (G.see_capacity g e))  then
+  let i,j  =  e  in 
+  mff i ; mff j ;print_string "u  = " ; print_int (G.see_capacity g e) ; print_string "  c  = " ; print_int (G.see_cost g e) ; print_newline (); print_newline ()
   
+in 
+
   let neg_cycle  = ref  (bellmann_ford_neg_cycle rg' ) in 
+
+
+
   while !neg_cycle <> None do 
-      
     let w  =  match !neg_cycle with
       | Some ls-> make_edge_path (List.hd ls) ls 
       | None -> failwith "Neg_cycle is none , unexepected / cycle_canceling"
     in
     let min_capa  = find_min_cap rg' w  in 
+    print_int min_capa; print_newline (); print_newline ();
     push_flow_residual rg' w min_capa ;
     neg_cycle := bellmann_ford_neg_cycle rg';
-  done
+  done;
+  G.iter_edg (mfff rg'.graph) rg'.graph   ; print_endline "*************"
 
+
+let min_cost g = 
+  complete_graph_of_graph g;
+  fill_cost g;
+
+
+  let g'  =  to_no_parallel_edges g |> to_s_source_s_sink in
+  let rg  =  make_residual g' in
+  
+  edmonds_karp rg;
+  cycle_canceling rg;
+  update_dual_with_residual g' rg ; 
+  let g'' =  g' |> from_s_source_s_sink |> from_no_parallel_edges in 
+  g''
 
 let total n  = (*que de nombres pairs svp*)
   Rnd.self_init ();
@@ -561,17 +614,5 @@ incr k
     ) 
   in 
     G.iter_ver parse_supply g ;
-   complete_graph_of_graph g;
-   fill_cost g;
-
-
-  let g'  =  to_no_parallel_edges g |> to_s_source_s_sink in
-  let rg  =  make_residual g' in
-  
-  edmonds_karp rg;
-  cycle_canceling rg;
-  update_dual_with_residual g' rg ; 
-  let g'' =  g' |> from_s_source_s_sink |> from_no_parallel_edges in 
-  g''
-
+  min_cost g
   

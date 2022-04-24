@@ -1,14 +1,17 @@
-random generation pr test le display: 
+((113,53),
+(120,70),
+(149,91),
+(205,98),
+(241,110,
+(262,70),
+(270,68),
+(279,180))
 
-let g  =  Mtr.generate_instance 20 
-(*********************************************************)
-let f'' u v   = Rnd.self_init () ;   if Rnd.bool () then G.add_edge g (u,v) 
+graph avec cycles
 
-(*********************************************************)
 
-let ()  =  Mtr.iter_vert_pairs f'' g
-let f  e = (Rnd.self_init () ; let n  = Rnd.int 40 - Rnd.int 40 in G.set_flow_edge g e n)
-let f'  e = (Rnd.self_init () ; let n  = Rnd.int 40 - Rnd.int 40 in G.set_supply g e n)
+_______________
 
-let ()  = G.iter_edg f g  
-let ()  = G.iter_ver f' g
+graph simple
+let a, b , c ,d= (100,100),(200,75),(250,200), (50,75)
+ let ls  =  [a;b;c;d]
