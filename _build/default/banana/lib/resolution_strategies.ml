@@ -46,13 +46,25 @@ let complete_graph_of_graph g  =
   in
   iter_vert_pairs  f g  
 
+
+let pow_crasse x n  =x |> float_of_int |> fun x ->  x ** n |> int_of_float  
+ let cout (i,j)  = 
+    let (i1,i2) ,  (j1,j2)   = G.see_label i , G.see_label j in 
+
+      (abs (i1-j1) * abs (i1-j1) * abs (i1-j1)* abs (i1-j1)  + abs (i2-j2)  * abs (i2-j2) * abs (i2-j2) * abs (i2-j2)  ) 
+    |> float_of_int |>( fun x ->  (x ** (1./.4.))*. 100000.)|>  int_of_float (*  *)  
+let couti (i,j)  = 
+    let (i1,i2) ,  (j1,j2)   = G.see_label i , G.see_label j in 
+
+      abs ( abs (i1-j1) * abs (i1-j1)+ abs (i2-j2)  * abs (i2-j2))  (* 
+    |> float_of_int |>( fun x ->  (x ** (1./.4.))*. 100000.)|>  int_of_float *)  
+
 (**fill the edges cost*)
 let fill_cost g  = 
 
   let f (i,j)  = 
-    let (i1,i2) ,  (j1,j2)   = G.see_label i , G.see_label j in 
-    let d  = (i1-j1) * (i1-j1)  + (i2-j2)*(i2-j2) in 
-    G.set_cost g (i,j) d  
+   let d  = cout (i,j)  in 
+   G.set_cost g (i,j) d  
   in
    G.iter_edg f g 
 
@@ -392,8 +404,8 @@ let find_min_cap g' p  =
 (**input :  residual graph  | output : None /  modifies the ressidual as if normal graph +x flow along path p *)
 let push_flow_residual rg'  p  x = 
   let rg  = rg'.graph in   
-  if x <0 then failwith "Negative flow / push_flow_residual" 
-  else if x = 0 then () else (
+  if x <0 then failwith "Tried to push Negative flow / push_flow_residual" 
+  else if x = 0 then failwith "Tried to push 0 flow -> inefficient / push_flow_residual" ;
 
   let f (i,j) = 
     let cost = G.see_cost rg (i,j) in (*saved fot later in case we have to add the reverse edge*)
@@ -405,15 +417,14 @@ let push_flow_residual rg'  p  x =
               uij - x |> G.set_capacity rg (i,j) 
             )else (
               G.delete_edge rg (i,j));
-
     )
     );
-
+    
     if G.edge_in_graph rg (j,i) then ( 
-
       let uji  =  G.see_capacity rg (j,i) in 
+
       if not (G.is_infty_capa rg uji) then (
-      G.set_capacity rg (j,i ) (uji+x))
+       G.set_capacity rg (j,i ) (uji+x))
     )else(
        G.add_edge rg (j,i);
        G.set_cost rg (j,i) (-cost);
@@ -421,7 +432,7 @@ let push_flow_residual rg'  p  x =
      )
 
   in
-  List.iter f p)
+  List.iter f p
 
 
 (**modifies a residu to have max flow , input: residual graph  ~ aughmenting path finding functio-> output: None*)
@@ -477,7 +488,7 @@ let retrace_cycle v prede g =
 
 (** runs bellman-ford (label correcting alg) to detect neg cycle| Input :  a graph  | output : vertex Path as list representing cycle u0.. v1.. ... v.. u0*)
 exception Break
-let bellmann_ford_neg_cycle rg' = 
+let bellmann_ford_neg_cycle rg' = (*j'exclue les C ? au fait? *)
   let rg =  rg'.graph in
   let g  = copy_graph_including_vertices rg [N(-2,-2)] (H.create 0) in  (*copy of graph+ slack edge*)
   let s' = G.make_vertex (N(-2,-2) )in  (*slack vertex*)
@@ -488,7 +499,9 @@ let bellmann_ford_neg_cycle rg' =
   H.add distance_dict s' 0 ;
   H.add prede_dict s' s';
 
-  G.iter_ver (fun v -> G.add_edge g (s',v) ) rg;
+  G.iter_ver (fun v -> 
+    if (match G.see_label v with | C (_,_) -> false | N _ -> true) then 
+    G.add_edge g (s',v) ) rg;
   
   let relax_edge (u,v)  = 
       if (H.mem distance_dict u) then (
@@ -544,41 +557,22 @@ let bellmann_ford_neg_cycle rg' =
 
 let cycle_canceling rg'  =
 
-
-  let mff v = match G.see_label v  with
-  | N x -> let i,j  =  x in 
-           print_string " ( "; print_int i; print_string " , "; print_int j  ; print_string " )  "
-  | C(a,b) -> let a1, a2  =  a in 
-              let b1, b2 = b  in
-              print_string "C(" ;
-                print_int a1; print_string " , "; print_int a2   ; print_string  " | ";  
-                print_int b1; print_string " , "; print_int b2;
-              print_string ") " 
-in 
-let mfff  g e = if not (G.is_infty_capa g (G.see_capacity g e))  then
-  let i,j  =  e  in 
-  mff i ; mff j ;print_string "u  = " ; print_int (G.see_capacity g e) ; print_string "  c  = " ; print_int (G.see_cost g e) ; print_newline (); print_newline ()
-  
-in 
-
   let neg_cycle  = ref  (bellmann_ford_neg_cycle rg' ) in 
 
-
-
   while !neg_cycle <> None do 
-    let w  =  match !neg_cycle with
+     let w  =  match !neg_cycle with
       | Some ls-> make_edge_path (List.hd ls) ls 
       | None -> failwith "Neg_cycle is none , unexepected / cycle_canceling"
-    in
+  in 
+    
     let min_capa  = find_min_cap rg' w  in 
-    print_int min_capa; print_newline (); print_newline ();
     push_flow_residual rg' w min_capa ;
     neg_cycle := bellmann_ford_neg_cycle rg';
-  done;
-  G.iter_edg (mfff rg'.graph) rg'.graph   ; print_endline "*************"
-
+    done
+ 
 
 let min_cost g = 
+
   complete_graph_of_graph g;
   fill_cost g;
 
@@ -586,19 +580,35 @@ let min_cost g =
   let g'  =  to_no_parallel_edges g |> to_s_source_s_sink in
   let rg  =  make_residual g' in
   
+
   edmonds_karp rg;
-  cycle_canceling rg;
-  update_dual_with_residual g' rg ; 
+ cycle_canceling rg; 
+ update_dual_with_residual g' rg ; 
   let g'' =  g' |> from_s_source_s_sink |> from_no_parallel_edges in 
   g''
 
-let total n  = (*que de nombres pairs svp*)
+
+let write_in_log g  = 
+  let f v = 
+  let x,y = G.see_label v in 
+ " ( " ^ string_of_int x  ^ " , " ^ string_of_int y  ^ " ) " ^string_of_int (G.see_supply g v) ^"\n"
+  in 
+
+  let channel = open_out "enregistrement.txt" in 
+
+  let ff v stri= f v ^ stri in 
+  let sss = G.fold_ver ff  g "" in 
+  Printf.fprintf channel "%s\n" sss;
+  close_out channel
+
+
+let total n  flow_value = (*que de nombres pairs svp*)
   Rnd.self_init ();
   let g  =  generate_instance n  in 
   let k  = ref 1  in
   let total  =  ref 0 in
   let parse_supply v  = 
-    let b = if !k mod 2  = 0  then 1 else -1 in  (* (Rnd.int (flow_value/n +1) ) - (flow_value/(2*n)) in if r=0 then 1 else r *)
+    let b = (*if !k mod 2  = 0  then 1 else -1 in*)  let r = (Rnd.int (flow_value/n +1) )  - (flow_value/(2*n)) (*-*) in if r=0 then 1 else r  in 
     print_int b ; 
     if !k  =  n then(
       if !total = 0 then
@@ -613,6 +623,68 @@ let total n  = (*que de nombres pairs svp*)
 incr k
     ) 
   in 
+  
     G.iter_ver parse_supply g ;
+    write_in_log g;
+  min_cost g
+  
+
+
+let total2 n  flow_value = (*que de nombres pairs svp*)
+  Rnd.self_init ();
+  let g  =  generate_instance n  in 
+  let k  = ref 1  in
+  let total  =  ref 0 in
+  let neg  = 2 in 
+  let bs  =  Stack.create () in 
+  let t  =  ref (G.get_1_vert g )in 
+  let t'  = ref (G.get_1_vert g  )in 
+
+  for i = 1  to n do
+     if i<= n- neg then (
+      let r = max (Rnd.int (flow_value/n +1) ) 1  in 
+      Stack.push r bs;
+      incr k;
+      total := r + !total
+     ) else (
+        let  r =  (if !k  = n then - !total else  min (-Rnd.int (flow_value/n +1) ) (-1))  
+        in Stack.push r bs;
+        incr k;
+        total := r + !total
+      )
+
+  done ; 
+  k:= 0 ; 
+    
+  G.iter_ver (fun v -> 
+    let b  =  Stack.pop bs in 
+    if!k = 0 then 
+      t' := v
+  else if !k =  1 then
+      t := v ;
+ 
+     G.set_supply g v b;
+     incr k) g;
+  
+
+  let mini  =  ref (-1)  in  
+  let mini_vert = ref (G.get_1_vert g) in 
+
+  
+ let f g v = 
+  let x,y = G.see_label v in 
+ print_string " ( "; print_int x; print_string " , "; print_int y  ; print_string " )   b  = " ; print_int (G.see_supply g v) ; print_newline () 
+  in  
+  G.iter_ver ( fun v  -> 
+    if v <> !t' && v <> !t then 
+      let cc  = cout ( v ,  !t)  - cout (v,!t' ) in 
+      if cc < !mini then(
+        mini:= cc ; 
+        mini_vert := v;
+        print_int cc ; print_string "  " ; f g v ; print_newline () ; )
+         ) g ; 
+  
+ 
+  f g !mini_vert ; 
   min_cost g
   

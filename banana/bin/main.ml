@@ -1,18 +1,13 @@
+(*fichier de test et d'execution des programmes*)
+
 module G = Basics.Flow_graph
 module M =  Basics.Resolution_strategies
 module Rnd =  Random
 module D = Basics.Dynamic_array
 
-let a, b , c ,d,e,f(*,gg,hh *) = ((113,53),
-(120,70),
-(149,91),
-(205,98),
-(241,110),
-(262,70)(*,
-(270,68),
-(279,180) *))
+let a, b , c ,d  = (100 ,100), (150,100), (200,100), (250,100)
 
- let ls  =  [a; b ; c ;d;e;f(*;gg;hh;*)]
+ let ls  =  [a; b ; c ;d]
 let g = G.create ls
 
 let ss i x  = 
@@ -22,14 +17,10 @@ let h  i  j  u c  =
   G.fset_capacity g i j u;
   G.fset_cost g i j c
 
-let () =  ss a (-1);
-            ss b(-1);
-            ss c (-1);
-            ss d (1);
-            ss e (1);
-            ss f(1)(* ;
-            ss gg (1);
-             ss hh (-1)*)
+let () =    ss a (6);
+            ss b (-3);
+            ss c (-2);
+            ss d (-1)
 
                     
          
@@ -57,8 +48,8 @@ let ff  g e  =
   f  g i ; f g  j ; 
   print_string "c  = " ;print_int (G.see_capacity g e) ; print_string "  f  = " ;print_int (G.see_flow g e)  ; print_newline (); print_newline () 
 
-let other  =  M.min_cost g
 
+let other  =   (*M.min_cost g*) M.total 20 100
 
 
 (**)
