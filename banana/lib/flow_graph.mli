@@ -37,15 +37,15 @@ val is_empty : 'a t ->  bool (*an empty graph is a graph with no edge*)
 
 val infty_capa : 'a t -> int
 
-val neg_infty_cost : 'a t  ->  int
+val neg_infty_cost : 'a t  ->  float
 
-val pos_infty_cost : 'a t  -> int 
+val pos_infty_cost : 'a t  -> float
 
 val is_infty_capa : '  a t -> int   -> bool
 
-val is_pos_infty_cost : 'a t -> int  -> bool
+val is_pos_infty_cost : 'a t -> float  -> bool
 
-val is_neg_infty_cost : 'a t -> int ->bool
+val is_neg_infty_cost : 'a t -> float ->bool
 
 
 (*OBSERVERS*)
@@ -64,7 +64,7 @@ val see_supply : 'a t -> 'a vertex -> int (**Returns the supply  of the 'a verte
 
 val see_flow : 'a t -> 'a edge -> int(**Returns the flow  of the 'a edge (i,j) if (i,j) is in g, - the flow of (j,i) if (j,i) is in g and 0 otherwise *)
 
-val see_cost : 'a t-> 'a edge -> int (**Returns the cost  of the 'a edge as a `int*)
+val see_cost : 'a t-> 'a edge -> float (**Returns the cost  of the 'a edge as `float*)
 
 val see_capacity : 'a t -> 'a edge -> int  (**Returns the capacity  of the 'a edge  as a `int*)
 
@@ -81,7 +81,7 @@ val get_1_capa :  'a t  ->  int
 
 val get_1_flow :  'a t  -> int
 
-val get_1_cost :  'a t  -> int
+val get_1_cost :  'a t  -> float
 
 val get_1_supply : 'a t  -> int
 
@@ -90,7 +90,7 @@ val get_1_supply : 'a t  -> int
 
 val set_flow : 'a t-> 'a edge -> int -> unit(** set_flow g e x-> assigns the flow x to the 'a edge e*)
 
-val set_cost : 'a t -> 'a edge -> int -> unit (** set_cost g e x-> assigns the cost x to the 'a edge e *)
+val set_cost : 'a t -> 'a edge -> float -> unit (** set_cost g e x-> assigns the cost x to the 'a edge e *)
 
 val set_capacity : 'a t-> 'a edge -> int -> unit(** set_capacity g e x -> assigns the capacity x to the 'a edge e*)
 
@@ -162,6 +162,7 @@ val succ_ver : 'a t -> 'a vertex -> 'a vset(**Lists the succcessor of the 'a ver
 
 (*#fast observers constructors and mutators and  #*)
 
+val fedge_in_graph : 'a t -> 'a -> 'a  ->  bool
 
 val fmake_edge :  'a  -> 'a  -> 'a edge (*f stands for "fast"*)
 
@@ -173,7 +174,7 @@ val fsee_supply : 'a t -> 'a  -> int (**Returns the supply  of the 'a vertex as 
 
 val fsee_flow : 'a t -> 'a  -> 'a  -> int(**Returns the flow  of the 'a edge as a `int*)
 
-val fsee_cost : 'a t-> 'a  -> 'a  -> int(**Returns the cost  of the 'a edge as a `int*)
+val fsee_cost : 'a t-> 'a  -> 'a  -> float(**Returns the cost  of the 'a edge as a `float*)
 
 val fsee_capacity : 'a t -> 'a  -> 'a ->  int  (**Returns the capacity  of the 'a edge as a `Capacity*)
 
@@ -183,7 +184,7 @@ val fsee_capacity : 'a t -> 'a  -> 'a ->  int  (**Returns the capacity  of the '
 
 val fset_flow : 'a t-> 'a  -> 'a ->  int -> unit(** set_flow_edge g e x-> assigns the flow x to the 'a edge e*)
 
-val fset_cost : 'a t -> 'a  -> 'a -> int -> unit (** set_cost g e x-> assigns the cost x to the 'a edge e *)
+val fset_cost : 'a t -> 'a  -> 'a -> float -> unit (** set_cost g e x-> assigns the cost x to the 'a edge e *)
 
 val fset_capacity : 'a t-> 'a  -> 'a -> int -> unit(** set_capacity g e x -> assigns the capacity x to the 'a edge e*)
 

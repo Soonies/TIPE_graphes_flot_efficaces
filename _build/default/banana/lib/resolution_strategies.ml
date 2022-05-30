@@ -15,6 +15,20 @@ let square_dim  = 300
 let make_canonical g s t r= 
   { s = s ;  t=  t ;  graph  =  g ; residual  = r }
     
+let mff v = match G.see_label v  with
+  | N x -> let i,j  =  x in 
+           print_string " ( "; print_int i; print_string " , "; print_int j  ; print_string " )  "
+  | C(a,b) -> let a1, a2  =  a in 
+              let b1, b2 = b  in
+              print_string "C(" ;
+                print_int a1; print_string " , "; print_int a2   ; print_string  " | ";  
+                print_int b1; print_string " , "; print_int b2;
+              print_string ") " 
+
+let mfff  g e = 
+  let i,j  =  e  in 
+  mff i ; mff j ;print_string "c  = " ; print_float (G.see_cost g e) ; print_string "u  = " ; print_int (G.see_capacity g e) ; print_string "  f  = " ; print_int (G.see_flow g e) ; print_newline (); print_newline ()
+  
 
 (**creates an empty graph off of  n random points on the plane*)
 let generate_instance n  = 
@@ -46,18 +60,15 @@ let complete_graph_of_graph g  =
   in
   iter_vert_pairs  f g  
 
+(**standard p-norm*)
+let norm p i' j'  k' l'= 
+    let i,j,k,l = i' |> float_of_int , j' |> float_of_int,k' |> float_of_int,l' |> float_of_int in 
+     ((Float.abs  (i -.j))**p +. (Float.abs  (k-.l) ) **p)
 
-let pow_crasse x n  =x |> float_of_int |> fun x ->  x ** n |> int_of_float  
+
  let cout (i,j)  = 
     let (i1,i2) ,  (j1,j2)   = G.see_label i , G.see_label j in 
-
-      (abs (i1-j1) * abs (i1-j1) * abs (i1-j1)* abs (i1-j1)  + abs (i2-j2)  * abs (i2-j2) * abs (i2-j2) * abs (i2-j2)  ) 
-    |> float_of_int |>( fun x ->  (x ** (1./.4.))*. 100000.)|>  int_of_float (*  *)  
-let couti (i,j)  = 
-    let (i1,i2) ,  (j1,j2)   = G.see_label i , G.see_label j in 
-
-      abs ( abs (i1-j1) * abs (i1-j1)+ abs (i2-j2)  * abs (i2-j2))  (* 
-    |> float_of_int |>( fun x ->  (x ** (1./.4.))*. 100000.)|>  int_of_float *)  
+     norm (20.) i1 j1 i2 j2
 
 (**fill the edges cost*)
 let fill_cost g  = 
@@ -67,6 +78,13 @@ let fill_cost g  =
    G.set_cost g (i,j) d  
   in
    G.iter_edg f g 
+
+(**deletes every 0 flow edges*)
+let trim g  = 
+  let f e = 
+    if G.see_flow g e= 0 then
+      G.delete_edge g e 
+    in G.iter_edg f g
 
 (**transformation to no parallel edged graph | input : grpah | output:  corresponding graph with 'a node vertex type ok?! apparemment*)
 let to_no_parallel_edges g  = 
@@ -99,6 +117,8 @@ let to_no_parallel_edges g  =
     )
   in
   G.iter_edg parse_edge1 g ; 
+
+
   let g' = G.create !ls_vert in 
   (*parse vertices*)
   let parse_vertex v  =  match G.see_label v with
@@ -111,15 +131,16 @@ let to_no_parallel_edges g  =
   (*parse edge 2*)
   let parse_aux a b capa cost  = 
     G.fadd_edge g' a b ;
-    if G.is_infty_capa g' capa then
+    if G.is_infty_capa g capa then 
       G.fset_infty_capa g' a b 
     else
       G.fset_capacity g' a b capa
     ;
-    if G.is_pos_infty_cost g' cost then
-      G.fset_cost g' a b (-1)
-    else if G.is_neg_infty_cost g' cost then
-      G.fset_cost g' a b (-2)
+    if G.is_pos_infty_cost g cost then
+      G.fset_pos_infty_cost  g' a b (* j'ai change ici, modified from line below*)
+     (* G.fset_cost g' a b (-.1.) ne devrait-on pas utiliser les fonctions directemnet ???*)
+    else if G.is_neg_infty_cost g cost then (*same here*)
+      G.fset_neg_infty_cost g' a b 
     else
       G.fset_cost g' a b cost
 in
@@ -130,13 +151,15 @@ in
        
     
     | N _ , C(_,_) -> failwith "Tried to link Normal edge with non related 'reverse vertex' / to_no_parallel_edges ->  parse_edges "
-    | C(i,j) ,  N k  when j = k -> parse_aux   (C(i,j))  (N k) (-1) 0; (*capa infinie*)
+    | C(i,j) ,  N k  when j = k -> parse_aux   (C(i,j))  (N k) (G.infty_capa g) 0.; (*capa infinie*)
     |  C(_,_) ,  N _ -> failwith "Tried to link  'reverse vertex'  with non related Normal edge / to_no_parallel_edges ->  parse_edges "
     | _ -> failwith "Tried to link 2 reverse vertices /  to_no_parallel_edges ->  parse_edges "
   in
   Stack.iter parse_edge2 edge_stack ;
   g'
 
+
+(*/!\ if flow on parallel edges, sums it up *)
 let from_no_parallel_edges g'  = 
   let ls  =  G.fold_ver (fun x ls-> match G.see_label x with |   N i -> i::ls | C (_,_) -> ls) g' [] in
   let g  = G.create ls in 
@@ -147,31 +170,53 @@ let from_no_parallel_edges g'  =
   in
   G.iter_ver parse_vertex g'; 
 
-  let parse_aux a b capa cost flow = 
-    G.fadd_edge g a b ;
-    if G.is_infty_capa g capa then
-      G.fset_infty_capa g a b 
-    else 
-      G.fset_capacity g a b capa;
-    G.fset_cost g a b cost;
-    G.fset_flow g a b flow
-  in
+  let parse_edge a b capa cost flow = 
+      G.fadd_edge g a b ;
+      if G.is_infty_capa g' capa then
+        G.fset_infty_capa g a b 
+      else 
+        G.fset_capacity g a b capa
+      ;
+      G.fset_cost g a b cost;
+      G.fset_flow g a b flow
+
+  in 
+  (* big chunky bit: checks existence of a reverse edge with non zero flow:
+    and adds the sums of the two edges to have one unique edge a the end*)
   let f (i',j') =
+    let e  =  (i',j') in 
     let i,j = G.see_label i' ,  G.see_label j'  in match i,j with
     | N k , C(a,_) when k  <> a -> failwith "Link between Normal vetex and unrelated reverse vertex/ from_no_parallel_edges "
-    | N a, N b | N _ , C(a,b) -> parse_aux a b (G.see_capacity g' (i',j') ) (G.see_cost g' (i',j')) (G.see_flow g' (i',j'))
-    | C(_,b) , N k when b<> k -> failwith "Link between  unrelated reverse vertex abd Normal vetex / from_no_parallel_edges " 
+    | N a, N b ->   if G.fedge_in_graph g' (N b)  (C( b ,a)) && G.fsee_flow g'(N b)  (C( b ,a)) <> 0 then (  
+                      let f_direct  =  G.see_flow g' e in 
+                      let f_reverse = G.fsee_flow g'(N b)  (C( b ,a)) in
+                      if f_direct > f_reverse then(
+                        parse_edge a b (G.see_capacity g' e ) (G.see_cost g' e) (f_direct - f_reverse)
+                      )
+                    ) else (
+                      parse_edge a b (G.see_capacity g' e ) (G.see_cost g' e) (G.see_flow g' e)
+                    )
+      | N _ , C(a,b) ->if G.fedge_in_graph g' (N b) (N a) && G.fsee_flow g'(N b) (N a) <> 0 then (
+                    let f_direct  =  G.see_flow g' e in 
+                    let f_reverse = G.fsee_flow g'(N b)  (N a) in
+                    if f_direct > f_reverse then(
+                      parse_edge a b (G.see_capacity g' e ) (G.see_cost g' e) (f_direct - f_reverse)
+                    )
+                  ) else (
+                    parse_edge a b (G.see_capacity g' e ) (G.see_cost g' e) (G.see_flow g' e)
+                  )     
+    | C(_,b) , N k when b <> k -> failwith "Link between  unrelated reverse vertex abd Normal vetex / from_no_parallel_edges " 
     | C(_,_) , N _ -> () 
-    | C (_,_) , C (_,_) -> failwith "Link between to reverse vertices /  from_no_parallel_edges"
+    | C (_,_) , C (_,_) -> failwith "Link between two reverse vertices /  from_no_parallel_edges"
   in 
   G.iter_edg f g';
   g
 
-(**copies the graph  edges and attributes + adds the vertices in ls (doesnt copy the supplies) |input ~graph ~vertex list to be added | Output : new graph *)
-let copy_graph_including_vertices g ls exclude = 
+(**copies the graph  edges and attributes + adds the vertices in ls + excludes vertices present in exclyde_vert (doesnt copy the supplies) + excludes edges present in exclude_edg|input ~graph ~vertex list to be added ~ vertec * 'b dict to be excluded ~ edg * 'c to be excludes| Output : new graph *)
+let copy_graph g ls exclude_vert exclude_edg = 
   
-  let excluded_v   =  H.mem exclude  in
-  let excluded_e  (i,j) =  excluded_v i || excluded_v j  in
+  let excluded_v   =  H.mem exclude_vert  in
+  let excluded_e  (i,j) =  excluded_v i || excluded_v j || H.mem exclude_edg (i,j) in
   
   let ls_vert =  ls @ ( G.fold_ver (fun x ls -> if excluded_v x then ls else ( (G.see_label x )::ls )) g [] ) in 
   let g'  =  G.create ls_vert  in 
@@ -180,7 +225,8 @@ let copy_graph_including_vertices g ls exclude =
 
   (*parse the edges*)
   let parse_cost  e = 
-    if excluded_e e then () else ( 
+    if not (excluded_e e) then ( 
+
     let c  = G.see_cost g e in 
     if G.is_pos_infty_cost g c then (
       G.set_pos_infty_cost g' e
@@ -188,20 +234,21 @@ let copy_graph_including_vertices g ls exclude =
       G.set_neg_infty_cost g' e
     ) else (
       G.set_cost g' e c
-    ))
+    )
+    )
   in
   let parse_capa  e = 
-  if excluded_e e then () else (
+  if not (excluded_e e) then (
   let u  =  G.see_capacity g e in 
     if G.is_infty_capa g u then(
-      G.set_infty_capa g e 
+      G.set_infty_capa g' e 
     ) else (
-      G.set_capacity g e u
+      G.set_capacity g' e u
     ))
   in 
   G.iter_edg parse_cost g ;
   G.iter_edg parse_capa g;
-  G.iter_edg (fun x -> if excluded_e x then () else  G.set_flow g' x (G.see_flow g  x) ) g;
+  G.iter_edg (fun x -> if not( excluded_e x) then G.set_flow g' x (G.see_flow g  x) ) g;
   
   g'
 
@@ -211,7 +258,7 @@ let to_s_source_s_sink g =
   let s  =  G.make_vertex (N (-1,-1)) in 
   let t  =  G.make_vertex (N (square_dim +1,  square_dim +1)) in 
   
-  let g'   = copy_graph_including_vertices g [N(-1,-1);N (square_dim + 1  ,  square_dim +1) ] (H.create 0) in
+  let g'   = copy_graph g [N(-1,-1);N (square_dim + 1  ,  square_dim +1) ] (H.create 0) (H.create 0) in
   let f i =  
     
     let b  = G.see_supply g i in
@@ -230,7 +277,6 @@ let to_s_source_s_sink g =
     residual  =  false ; 
     graph = g'} 
 
-
 let from_s_source_s_sink g  =  
   let s  =  g.s in 
   let t = g.t in  
@@ -239,7 +285,7 @@ let from_s_source_s_sink g  =
   H.add exclude s () ; 
   H.add exclude t () ;
 
-  let g' = copy_graph_including_vertices g.graph [] exclude in  
+  let g' = copy_graph g.graph [] exclude (H.create 0) in  
   let parse_source_sink (i,j) = match ( i ,   j) with
     | (u,v) when v = t -> G.set_supply g' u (-(G.see_capacity g.graph (u,t)))
     | (u,v) when u = s -> G.set_supply g' v (G.see_capacity g.graph (s,v))
@@ -247,9 +293,6 @@ let from_s_source_s_sink g  =
   
 in G.iter_edg parse_source_sink g.graph;
   g'
-
-
-
 
 (**breadth first traversal of vertx reacheabl from source,  input:  graph ~ source | output: dict with  {vertx : predecessor of vertex / set to itself if source *)
 let bfs f g s  = 
@@ -327,7 +370,7 @@ let floyd_warshall g  =
     pi.(i').(j') <- Some (i')
  
   in  G.iter_edg f g;
-  G.iter_ver (fun i -> let i' = H.find v2id i in d.(i').(i') <- Some 0 ; ) g;
+  G.iter_ver (fun i -> let i' = H.find v2id i in d.(i').(i') <- Some 0. ; ) g;
 
   for l = 0 to n-1 do
     for i  = 0 to n-1 do 
@@ -336,11 +379,11 @@ let floyd_warshall g  =
         let a,b, c  =  d.(i).(j) , d.(i).(l) , d.(l).(j) in 
           match a,b,c with
           |Some x, Some y, Some z ->  
-            if x>  y+ z then(d.(i).(j) <- Some (y+z) ;
+            if x>  y+. z then(d.(i).(j) <- Some (y+.z) ;
               pi.(i).(j) <- pi.(l).(j))
           | _ , _, None| _, None, _ -> () 
           |None, Some y, Some z  -> 
-            d.(i).(j) <- Some (y+z) ;
+            d.(i).(j) <- Some (y+.z) ;
             pi.(i).(j) <- pi.(l).(j)
   done; done; done;
   d,pi,id2v
@@ -363,15 +406,15 @@ let make_residual  g'  =
       if  G.is_infty_capa g u then (
         G.set_infty_capa  rg  e 
       ) else(
-        G.set_capacity rg  e ( (G.see_capacity g e) - x)
+        G.set_capacity rg  e ( u - x)
        );
 
-      G.set_cost rg e c)
-    ; if x> 0  then (
+      G.set_cost rg e c;
+     if x> 0  then (
         G.add_edge rg (j,i);
         G.set_capacity rg (j,i) x ;
-        G.set_cost rg (j,i) (-c) ; 
-    );
+        G.set_cost rg (j,i) (-.c)  ; 
+    ) )else( failwith "graph contains flow> capa / make_residual" );
   in 
   G.iter_edg parse_edge g;
   {s = g'.s ; 
@@ -401,7 +444,7 @@ let find_min_cap g' p  =
   List.iter (fun x -> if (G.see_capacity g x )< !mini then mini :=  G.see_capacity g x) p;
   !mini
 
-(**input :  residual graph  | output : None /  modifies the ressidual as if normal graph +x flow along path p *)
+(**input :  residual graph  ~ edge list reprenseting path ~x units of flow | output : None /  modifies the ressidual as if normal graph +x flow along path p *)
 let push_flow_residual rg'  p  x = 
   let rg  = rg'.graph in   
   if x <0 then failwith "Tried to push Negative flow / push_flow_residual" 
@@ -412,11 +455,14 @@ let push_flow_residual rg'  p  x =
     let uij = G.see_capacity rg (i,j) in 
     
     ( if not ( G.is_infty_capa rg uij) then (
-        (* no need to change capa, stays unchanged after pushing flow*)
+        (* no need to change capa if infty, stays unchanged after pushing flow*)
         if uij -  x > 0 then(
               uij - x |> G.set_capacity rg (i,j) 
-            )else (
-              G.delete_edge rg (i,j));
+        )else if uij -x = 0  then (
+              G.delete_edge rg (i,j)
+        ) else(
+          failwith "Tried to push excessive amount of flow along paths relative to max capacity/ push_flow_residual "
+        );
     )
     );
     
@@ -427,7 +473,7 @@ let push_flow_residual rg'  p  x =
        G.set_capacity rg (j,i ) (uji+x))
     )else(
        G.add_edge rg (j,i);
-       G.set_cost rg (j,i) (-cost);
+       G.set_cost rg (j,i) (-.cost);
        G.set_capacity rg (j,i) x;
      )
 
@@ -456,13 +502,12 @@ let edmonds_karp rg = floyd_fulkerson rg  (fun g' -> let g = g'.graph in  path_b
 let retrace_cycle v prede g =
   if H.length prede  <=1  then failwith "Dict with predecessors has less than 1 vertex passed ( could be empty or just 1) / retrace_path";
   
-  
   let ls  =  ref [] in
   let current  = ref v in  
   let count  =  ref 0  in 
   let m  = G.nb_edge g in 
   try
-    (*run 1 *)
+    (*run 1 to find begining of cycle*)
     let deja_vu = H.create m in 
     while not (H.mem deja_vu !current) do
       if !count > m+1 then failwith "Infinite loop, dict corrupted / retrace_cycle";
@@ -485,18 +530,19 @@ let retrace_cycle v prede g =
   with
   | Not_found -> failwith " Failed to find a predecessor of a vertex in Dict = Dict corrupted / retrace_cycle " 
 
+  
+exception Break
 
 (** runs bellman-ford (label correcting alg) to detect neg cycle| Input :  a graph  | output : vertex Path as list representing cycle u0.. v1.. ... v.. u0*)
-exception Break
 let bellmann_ford_neg_cycle rg' = (*j'exclue les C ? au fait? *)
   let rg =  rg'.graph in
-  let g  = copy_graph_including_vertices rg [N(-2,-2)] (H.create 0) in  (*copy of graph+ slack edge*)
+  let g  = copy_graph rg [N(-2,-2)] (H.create 0) (H.create 0) in  (*copy of graph+ slack edge*)
   let s' = G.make_vertex (N(-2,-2) )in  (*slack vertex*)
 
   let n  = G.size g in 
   let distance_dict =  H.create n  in 
   let prede_dict  =  H.create n  in
-  H.add distance_dict s' 0 ;
+  H.add distance_dict s' 0. ;
   H.add prede_dict s' s';
 
   G.iter_ver (fun v -> 
@@ -507,17 +553,16 @@ let bellmann_ford_neg_cycle rg' = (*j'exclue les C ? au fait? *)
       if (H.mem distance_dict u) then (
 
         let du  = H.find distance_dict u  in 
+        let d_candidate = du +.  G.see_cost g (u,v) in
         if (H.mem distance_dict v) then (
-          let dv  =  H.find distance_dict v  in 
-          if dv > du +  G.see_cost g (u,v) then(
-            H.replace distance_dict v (du + G.see_cost g (u,v)) ; 
+          let dv  =  H.find distance_dict v  in           
+          if dv > d_candidate then(
+            H.replace distance_dict v d_candidate ; 
             H.replace prede_dict v u;
-            
           );
         ) else (
-          H.replace distance_dict v (du + G.see_cost g (u,v) ); 
-          H.replace prede_dict v u;
-          
+          H.replace distance_dict v d_candidate; 
+          H.replace prede_dict v u;          
         );
       )
     in 
@@ -527,7 +572,6 @@ let bellmann_ford_neg_cycle rg' = (*j'exclue les C ? au fait? *)
    done;
 
   (* checks for the presence of neg cycle*)
-
   let start_cycle  = ref s'  in  (*just to fill in, in the case of the presence of a cycle, this value will be replaced. Otherwise, stays unused*)
   let cycle  =  ref None  in 
 
@@ -536,7 +580,7 @@ let bellmann_ford_neg_cycle rg' = (*j'exclue les C ? au fait? *)
         let du  = H.find distance_dict u  in 
         if (H.mem distance_dict v) then (
           let dv  =  H.find distance_dict v  in 
-          if dv > du +  G.see_cost g (u,v) then(
+          if dv > du +.  G.see_cost g (u,v) then(
             start_cycle := u  ;  
             raise Break
           );
@@ -550,57 +594,72 @@ let bellmann_ford_neg_cycle rg' = (*j'exclue les C ? au fait? *)
     G.iter_edg test_relax_edge rg ; 
   with
     | Break -> cycle :=  Some (retrace_cycle (!start_cycle) prede_dict g  );
-  );
-  !cycle
+  ); 
 
+  (*valid cycle in resigraph iff len cycle >2 (list > 3)*)
+  match !cycle  with 
+  | (Some ls) when (List.length ls <=3 ) -> None
+  | None -> None
+  | _ ->  !cycle
 
-
-let cycle_canceling rg'  =
-
-  let neg_cycle  = ref  (bellmann_ford_neg_cycle rg' ) in 
-
-  while !neg_cycle <> None do 
-     let w  =  match !neg_cycle with
+let cycle_canceling rg  =
+  let neg_cycle  = ref  (bellmann_ford_neg_cycle rg ) in 
+  while (!neg_cycle) <> None do 
+    List.iter (mff) (match !neg_cycle with |Some ls -> ls |None -> failwith "caca");
+     let w  =  match  !neg_cycle with
       | Some ls-> make_edge_path (List.hd ls) ls 
-      | None -> failwith "Neg_cycle is none , unexepected / cycle_canceling"
-  in 
-    
-    let min_capa  = find_min_cap rg' w  in 
-    push_flow_residual rg' w min_capa ;
-    neg_cycle := bellmann_ford_neg_cycle rg';
+      | None -> failwith "Neg_cycle is none , unexpected / cycle_canceling"
+    in 
+    print_newline ();
+     List.iter (mfff rg.graph) (w);
+    let min_capa  = find_min_cap rg w  in
+    print_int min_capa ;  
+    print_endline "_________";
+    push_flow_residual rg w min_capa ;
+    neg_cycle := bellmann_ford_neg_cycle rg;
     done
- 
+
+let write_in_log g  = 
+  let k = ref 0 in 
+  let stri  =  ref "" in
+  let stri2 = ref " let () = " in   
+  let str_final= ref "let ls  =  [ " in  
+  let f v = 
+    let x,y = G.see_label v in 
+    stri := !stri^ "\n let a"^string_of_int !k ^" = ( " ^ string_of_int x  ^ " , " ^ string_of_int y  ^ " ) " ;
+    stri2 := !stri2^ "\n ss a"^string_of_int !k ^ " (" ^string_of_int (G.see_supply g v)^");";
+    incr k ; 
+    in 
+    let channel = open_out "enregistrement.txt" in 
+
+    G.iter_ver f g;
+
+    for i=0 to !k-1 do
+    str_final := !str_final ^ "a"^ string_of_int i ^ "; "
+    done;
+    str_final := !str_final ^ "] \n";
+
+  str_final  :=   !stri ^ "\n" ^ !str_final ^"\n let g = G.create ls \n let ss i x  =    G.fset_supply g i x
+  \n " ^ !stri2; 
+    Printf.fprintf channel "%s\n" !str_final;
+    close_out channel
+
 
 let min_cost g = 
-
   complete_graph_of_graph g;
   fill_cost g;
 
-
+  write_in_log g;
   let g'  =  to_no_parallel_edges g |> to_s_source_s_sink in
   let rg  =  make_residual g' in
   
-
-  edmonds_karp rg;
- cycle_canceling rg; 
+ 
+  edmonds_karp rg; print_endline "ici";
+ cycle_canceling rg;  print_endline "there";
  update_dual_with_residual g' rg ; 
   let g'' =  g' |> from_s_source_s_sink |> from_no_parallel_edges in 
+  
   g''
-
-
-let write_in_log g  = 
-  let f v = 
-  let x,y = G.see_label v in 
- " ( " ^ string_of_int x  ^ " , " ^ string_of_int y  ^ " ) " ^string_of_int (G.see_supply g v) ^"\n"
-  in 
-
-  let channel = open_out "enregistrement.txt" in 
-
-  let ff v stri= f v ^ stri in 
-  let sss = G.fold_ver ff  g "" in 
-  Printf.fprintf channel "%s\n" sss;
-  close_out channel
-
 
 let total n  flow_value = (*que de nombres pairs svp*)
   Rnd.self_init ();
@@ -625,8 +684,8 @@ incr k
   in 
   
     G.iter_ver parse_supply g ;
-    write_in_log g;
-  min_cost g
+    min_cost g 
+
   
 
 
@@ -635,7 +694,7 @@ let total2 n  flow_value = (*que de nombres pairs svp*)
   let g  =  generate_instance n  in 
   let k  = ref 1  in
   let total  =  ref 0 in
-  let neg  = 2 in 
+  let neg  = n/3 in 
   let bs  =  Stack.create () in 
   let t  =  ref (G.get_1_vert g )in 
   let t'  = ref (G.get_1_vert g  )in 
@@ -667,7 +726,7 @@ let total2 n  flow_value = (*que de nombres pairs svp*)
      incr k) g;
   
 
-  let mini  =  ref (-1)  in  
+  let mini  =  ref (-.1.)  in  
   let mini_vert = ref (G.get_1_vert g) in 
 
   
@@ -677,14 +736,13 @@ let total2 n  flow_value = (*que de nombres pairs svp*)
   in  
   G.iter_ver ( fun v  -> 
     if v <> !t' && v <> !t then 
-      let cc  = cout ( v ,  !t)  - cout (v,!t' ) in 
+      let cc  = cout ( v ,  !t)  -. cout (v,!t' ) in 
       if cc < !mini then(
         mini:= cc ; 
         mini_vert := v;
-        print_int cc ; print_string "  " ; f g v ; print_newline () ; )
+        print_float cc ; print_string "  " ; f g v ; print_newline () ; )
          ) g ; 
   
  
   f g !mini_vert ; 
   min_cost g
-  

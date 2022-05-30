@@ -1,0 +1,27 @@
+
+ let a0 = ( 66 , 8 ) 
+ let a1 = ( 212 , 82 ) 
+ let a2 = ( 211 , 221 ) 
+ let a3 = ( 258 , 206 ) 
+ let a4 = ( 299 , 281 ) 
+ let a5 = ( 177 , 135 ) 
+ let a6 = ( 203 , 112 ) 
+ let a7 = ( 235 , 122 ) 
+ let a8 = ( 186 , 198 ) 
+ let a9 = ( 14 , 293 ) 
+let ls  =  [ a0; a1; a2; a3; a4; a5; a6; a7; a8; a9; ] 
+
+ let g = G.create ls 
+ let ss i x  =    G.fset_supply g i x
+  
+  let () = 
+ ss a0 (1)
+ ss a1 (5)
+ ss a2 (-3)
+ ss a3 (-5)
+ ss a4 (1)
+ ss a5 (5)
+ ss a6 (1)
+ ss a7 (3)
+ ss a8 (1)
+ ss a9 (-9)

@@ -30,7 +30,7 @@ module DisplayFunct (M:Graph) =
         ( if G.is_pos_infty_cost g  c then 
             "+Infty" 
           else if G.is_neg_infty_cost g c then
-             "-Infty"  else string_of_int c ))
+             "-Infty"  else string_of_float c ))
 
 
     module Ver  = struct

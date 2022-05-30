@@ -10,7 +10,7 @@ type 'a vertex = V of 'a
 
 (*private type*)
 
-type cost  =  |PInfty | NInfty | C of int
+type cost  =  |PInfty | NInfty | C of float
 
 type 'a edge = 'a vertex * 'a vertex
 
@@ -18,7 +18,7 @@ type 'a edge_att_rec =  {edge : 'a edge ; cntnt : cost ref * int array }
 
 
 type 'a t = { mutable uU  :  int ;
-              mutable cC : int  ; 
+              mutable cC : float  ; 
   v_representant : 'a vertex ; 
   v : ('a vertex, int array) H.t ; (* dico attributs des vertex. Attribue array is of type [| i (unique index of the vertex) , b(i)|]*)
   e: ('a edge, int) H.t ; (*dico index des edges dans [edges] *)
@@ -47,11 +47,11 @@ let is_empty g = H.length g.e =0
 let infty_capa g  =  g.uU 
 let pos_infty_cost g =  g.cC
 
-let neg_infty_cost g =  - g.cC
+let neg_infty_cost g =  -. g.cC
 
 let is_infty_capa  g n  =  n = g.uU
 let is_pos_infty_cost g n  =  n =  g.cC
-let is_neg_infty_cost g n  =  n  =  -g.cC
+let is_neg_infty_cost g n  =  n  =  -. g.cC
 
 let size g  = H.length g.v
 
@@ -68,7 +68,7 @@ let update_uU g x  = if x >= g.uU then
 
 (**mettre a jour le cout maxi g.cC:  test si deja inferieur , si non fait le changement*)
 let update_cC g x  = if x >= g.cC then
-    g.cC <- x + 1
+    g.cC <- x +. 1.
 
 (**trouve index de l'edge e dans g.edges (table d'attributs etc)*)
 let index_edge g e  = H.find g.e e 
@@ -134,8 +134,8 @@ let see_cost g e  =
     let costt =   see_edge_cost_attribute g e in 
     match  costt with
     | PInfty -> g.cC
-    | NInfty -> -g.cC
-    | C n ->  n
+    | NInfty -> -. g.cC
+    | C cost -> cost 
   )
   else  failwith "Tried see cost but edge does not exist / see_cost"
 
@@ -165,8 +165,6 @@ let  get_1_of_blank  key g =
                 see_capacity g e
   | "flow" ->  let e = get_1_edge g in 
                                   see_flow g e 
-   | "cost" ->   let e = get_1_edge g in 
-                                  see_cost g e
   | "supply"-> let v  =  get_1_vert g in see_supply g v 
   | _ -> failwith "pa bon key"
 
@@ -175,13 +173,17 @@ let get_1_capa g  =  get_1_of_blank "capa" g
 
 let get_1_flow g  = get_1_of_blank "flow" g 
 
-let get_1_cost g  = get_1_of_blank "cost" g
+let get_1_cost g  = let e = get_1_edge g in see_cost g e
 
 let get_1_supply  g = get_1_of_blank "supply" g
 
 
 let set_flow g e x = 
   if not (edge_in_graph g e ) then failwith " Tried to set edge flow but edge does not exist/ set_flow" else(
+  (*updates max capa*)
+  let u_e = see_capacity g e in 
+  if (is_infty_capa g u_e) && x > u_e then 
+    g.uU <- x+g.uU;   
   modify_edge_int_attribute g e x "flow")
 
 let set_cost g e x  = 
@@ -227,7 +229,7 @@ let create ls =
   let n =  List.length ls in 
   let g = {
     uU = 1 ; 
-    cC = 1 ;
+    cC = 1. ;
     v_representant = V (List.hd ls);
     v = H.create n ; 
     e = H.create n  ;
@@ -293,7 +295,7 @@ let add_edge g e =
   let attributes = Array.make 4 0   in 
   attributes.(0) <- (-1) ; (*capa infie par defaut*)
 
-  let new_edge_attribute_record  =  {edge = e ; cntnt = ref (C 0 ) ,attributes} in 
+  let new_edge_attribute_record  =  {edge = e ; cntnt = ref (C 0. ) ,attributes} in 
   let n_edge  = D.add g.edges new_edge_attribute_record in (* indice de l'edge dans g.edges*)
   
   H.add g.e e n_edge; (*enregistrement dans le registre*)
@@ -464,6 +466,8 @@ let fsee_flow g  =  fast_op_edge g see_flow
 let fsee_cost g  = fast_op_edge g see_cost
 
 let fsee_capacity g = fast_op_edge g see_capacity
+
+let fedge_in_graph g = fast_op_edge g edge_in_graph
 
 let fset_flow g = fast_mut_edge g set_flow
 

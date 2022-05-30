@@ -1,41 +1,11 @@
+(*fichier de test et d'execution des programmes*)
+
 module G = Basics.Flow_graph
 module M =  Basics.Resolution_strategies
 module Rnd =  Random
-module D = Basics.Dynamic_array
-
-let a, b , c ,d  = (100 ,100), (150,100), (200,100), (250,100)
-
- let ls  =  [a; b ; c ;d]
-let g = G.create ls
-
-let ss i x  = 
-  G.fset_supply g i x
-
-let h  i  j  u c  =
-  G.fset_capacity g i j u;
-  G.fset_cost g i j c
-
-let () =    ss a (6);
-            ss b (-3);
-            ss c (-2);
-            ss d (-1)
-
-                    
+module D = Basics.Dynamic_array          
          
-let mff v = match G.see_label v  with
-  | M.N x -> let i,j  =  x in 
-           print_string " ( "; print_int i; print_string " , "; print_int j  ; print_string " )  "
-  | M.C(a,b) -> let a1, a2  =  a in 
-              let b1, b2 = b  in
-              print_string "C(" ;
-                print_int a1; print_string " , "; print_int a2   ; print_string  " | ";  
-                print_int b1; print_string " , "; print_int b2;
-              print_string ") " 
 
-let mfff  g e = 
-  let i,j  =  e  in 
-  mff i ; mff j ;print_string "c  = " ; print_int (G.see_capacity g e) ; print_string "  f  = " ; print_int (G.see_flow g e) ; print_newline (); print_newline ()
-  
 
 let f g v = 
   let x,y = G.see_label v in 
@@ -46,9 +16,78 @@ let ff  g e  =
   f  g i ; f g  j ; 
   print_string "c  = " ;print_int (G.see_capacity g e) ; print_string "  f  = " ;print_int (G.see_flow g e)  ; print_newline (); print_newline () 
 
+ let a0 = ( 299 , 210 ) 
+ let a1 = ( 117 , 74 ) 
+ let a2 = ( 264 , 209 ) 
+ let a3 = ( 99 , 64 ) 
+ let a4 = ( 205 , 46 ) 
+ let a5 = ( 275 , 119 ) 
+ let a6 = ( 26 , 27 ) 
+ let a7 = ( 136 , 295 ) 
+ let a8 = ( 18 , 30 ) 
+ let a9 = ( 142 , 71 ) 
+ let a10 = ( 140 , 261 ) 
+ let a11 = ( 16 , 69 ) 
+ let a12 = ( 229 , 107 ) 
+ let a13 = ( 170 , 42 ) 
+ let a14 = ( 83 , 79 ) 
+ let a15 = ( 160 , 284 ) 
+ let a16 = ( 53 , 289 ) 
+ let a17 = ( 224 , 298 ) 
+ let a18 = ( 248 , 73 ) 
+ let a19 = ( 13 , 228 ) 
+ let a20 = ( 246 , 286 ) 
+ let a21 = ( 22 , 114 ) 
+ let a22 = ( 179 , 297 ) 
+ let a23 = ( 273 , 277 ) 
+ let a24 = ( 9 , 165 ) 
+ let a25 = ( 16 , 145 ) 
+ let a26 = ( 217 , 84 ) 
+ let a27 = ( 81 , 263 ) 
+ let a28 = ( 119 , 161 ) 
+ let a29 = ( 178 , 160 ) 
+let ls  =  [ a0; a1; a2; a3; a4; a5; a6; a7; a8; a9; a10; a11; a12; a13; a14; a15; a16; a17; a18; a19; a20; a21; a22; a23; a24; a25; a26; a27; a28; a29; ] 
 
-let other  =   (*M.min_cost g*) M.total 20 100
+ let g = G.create ls 
+ let ss i x  =    G.fset_supply g i x
+  
+  let () = 
+ ss a0 (2);
+ ss a1 (-3);
+ ss a2 (-1);
+ ss a3 (2);
+ ss a4 (-3);
+ ss a5 (-1);
+ ss a6 (-2);
+ ss a7 (2);
+ ss a8 (2);
+ ss a9 (-2);
+ ss a10 (-2);
+ ss a11 (-3);
+ ss a12 (1);
+ ss a13 (3);
+ ss a14 (-1);
+ ss a15 (-1);
+ ss a16 (2);
+ ss a17 (2);
+ ss a18 (2);
+ ss a19 (2);
+ ss a20 (1);
+ ss a21 (1);
+ ss a22 (1);
+ ss a23 (-1);
+ ss a24 (1);
+ ss a25 (1);
+ ss a26 (3);
+ ss a27 (-2);
+ ss a28 (-3);
+ ss a29 (-3)
 
+
+let other  = let new_g = M.min_cost g in 
+               new_g  (* M.total 30 200*)
+
+(*let () = G.iter_edg (ff other) other*)
 
 (**)
 
