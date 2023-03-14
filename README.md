@@ -14,3 +14,4 @@ Le dossier ``lib`` contient l'ensemble des structures de donnees developpees, ai
 
 Le dossier ``bin`` contient le programme principal , depuis lequel on peut appliquer les algorithmes a des graphes particuliers>
 
+<img src="Images/peu%20de%20variabilite%203.png" width="48%"/>
