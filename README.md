@@ -1,6 +1,8 @@
 # TIPE_graphes_flot_efficaces
 Projet realise dans le cadre des TIPE: Identification de sous-structures optimales pour les graphes de flots 
 
+Dans ce projet, nous tentons d'exhiber des sous-structures optimales dans les graphes de flot qui sont des solutions d’un problème de coût minimum. Plus précisément, nous voulons savoir s’il existe des façons spéciales de connecter les nœuds dans un graphe, de telle sorte que le coût du flot minimum associé audit graphe soit minimal, parmi tous les reliages de noeuds possibles.
+
 Pour une description des tenants et des aboutissants du projets, consultez son rapport: [Rapport du projet](https://github.com/Soonies/TIPE_graphes_flot_efficaces/blob/master/Rapport/Rapport_JOACHIM_Julien.pdf)
 >"Ce rapport presente des pistes de recherche pour l'identification de sous-structures
 optimales de reseaux a flots solutions d'un probleme min-cost. On presente d'abord une
